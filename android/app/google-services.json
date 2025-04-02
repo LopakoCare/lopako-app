@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "393126444127",
+    "project_id": "lopako-4488a",
+    "storage_bucket": "lopako-4488a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393126444127:android:a9cb9b0c1830018b496fea",
+        "android_client_info": {
+          "package_name": "com.example.lopako_app_lis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393126444127-sushnt284ik41jiiuv9sm8f9gda5p71h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWT5DIJEOfHeyfNSkolo_VD484bewQg4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393126444127-sushnt284ik41jiiuv9sm8f9gda5p71h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
