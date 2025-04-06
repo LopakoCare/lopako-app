@@ -20,10 +20,19 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Página Principal"),
         actions: [
+          // Botón para ver perfil
+          IconButton(
+            icon: Icon(Icons.person),
+            tooltip: 'Ver Perfil',
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+          ),
           // Botón para cerrar sesión
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () => signOut(context), // Llamando a la función de logout
+            tooltip: 'Cerrar sesión',
+            onPressed: () => signOut(context),
           ),
         ],
       ),
@@ -33,14 +42,12 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Mensaje de bienvenida
             Text(
               '¡Has iniciado sesión correctamente!',
               style: TextStyle(fontSize: 22),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 40),
-            // Campo para agregar tarea
             TextField(
               decoration: InputDecoration(
                 labelText: "Nueva Tarea",
@@ -48,7 +55,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            // Botón para añadir tarea
             ElevatedButton(
               onPressed: () {
                 // Lógica para añadir tareas en el futuro
