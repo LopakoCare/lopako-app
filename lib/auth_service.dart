@@ -6,29 +6,19 @@ class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<User?> login(String email, String password) async {
-    try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
-      return userCredential.user;
-    } catch (e) {
-      print('Login error: $e');
-      return null;
-    }
+    UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      email: email.trim(),
+      password: password.trim(),
+    );
+    return userCredential.user;
   }
 
   Future<User?> register(String email, String password) async {
-    try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
-      return userCredential.user;
-    } catch (e) {
-      print('Register error: $e');
-      return null;
-    }
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email.trim(),
+      password: password.trim(),
+    );
+    return userCredential.user;
   }
 
   Future<User?> signInWithGoogle() async {

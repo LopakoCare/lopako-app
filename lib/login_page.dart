@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/auth_service.dart';
 import 'home_page.dart';
@@ -20,24 +21,79 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void handleAuth() async {
-    final email = emailController.text;
+    final email = emailController.text.trim();
     final password = passwordController.text;
 
-    final user = isLogin
-        ? await auth.login(email, password)
-        : await auth.register(email, password);
+    try {
+      final user = isLogin
+          ? await auth.login(email, password)
+          : await auth.register(email, password);
 
-    if (user != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => HomePage()),
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomePage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+
+      switch (e.code) {
+        case 'invalid-email':
+          message = 'El correo electrónico no tiene un formato válido.';
+          break;
+        case 'user-disabled':
+          message = 'Este usuario ha sido deshabilitado.';
+          break;
+        case 'user-not-found':
+          message = 'No existe una cuenta con este correo.';
+          break;
+        case 'wrong-password':
+          message = 'La contraseña es incorrecta.';
+          break;
+        case 'email-already-in-use':
+          message = 'Este correo ya está en uso.';
+          break;
+        case 'operation-not-allowed':
+          message = 'Esta operación no está permitida.';
+          break;
+        case 'weak-password':
+          message = 'La contraseña es demasiado débil (mínimo 6 caracteres).';
+          break;
+        default:
+          message = 'Ha ocurrido un error: ${e.message}';
+      }
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al ${isLogin ? 'iniciar sesión' : 'registrarse'}')),
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error inesperado'),
+          content: Text('$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
