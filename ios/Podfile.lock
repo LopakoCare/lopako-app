@@ -109,14 +109,14 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
   Firebase: 0312a2352584f782ea56f66d91606891d4607f06
-  firebase_auth: 5719ddc9f654b813405899480e84971bd8e61235
-  firebase_core: a626d00494efa398e7c54f25f1454a64c8abf197
+  firebase_auth: f17bd6bfc0bc3d83c6df9dc3829e5b6fee10b147
+  firebase_core: 3b49a055ff54114cae400581c13671fe53936c36
   FirebaseAppCheckInterop: 6a1757cfd4067d8e00fccd14fcc1b8fd78cfac07
   FirebaseAuth: c0f93dcc570c9da2bffb576969d793e95c344fbb
   FirebaseCore: 7ec4d0484817f12c3373955bc87762d96842d483
   FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  google_sign_in_ios: 4111e87aa5e24a4404f00ea13479f35e571969cc
+  google_sign_in_ios: 19297361f2c51d7d8ac0201b866ef1fa5d1f94a8
   GoogleSignIn: d4281ab6cf21542b1cfaff85c191f230b399d2db
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
@@ -126,4 +126,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 20e260c9bb3f61194c661a4ba028da86e4f3ed96
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
