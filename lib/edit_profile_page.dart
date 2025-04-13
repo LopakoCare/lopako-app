@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -8,33 +9,60 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  String _statusMessage = '';
+  final _nameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  int? _age;
 
-  void _updatePassword() async {
-    User? user = _auth.currentUser;
-    String newPassword = _passwordController.text;
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
 
-    try {
-      if (newPassword.isNotEmpty) {
-        await user?.updatePassword(newPassword);
-        setState(() {
-          _statusMessage = 'Contraseña actualizada correctamente.';
-        });
-      } else {
-        setState(() {
-          _statusMessage = 'Por favor introduce una nueva contraseña.';
-        });
+  void _loadUserData() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        final data = doc.data();
+        if (data != null) {
+          setState(() {
+            _nameController.text = data['name'] ?? '';
+            _age = data['age'];
+          });
+        }
       }
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _statusMessage = 'Error: ${e.message}';
-      });
-    } catch (e) {
-      setState(() {
-        _statusMessage = 'Error inesperado: $e';
-      });
+    }
+  }
+
+  Future<void> _updateProfile() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final name = _nameController.text.trim();
+      final password = _passwordController.text.trim();
+
+      try {
+        // Actualizar Firestore
+        await _firestore.collection('users').doc(user.uid).update({
+          'name': name,
+          'age': _age ?? 0,
+        });
+
+        // Actualizar displayName en Firebase Auth
+        await user.updateDisplayName(name);
+
+        // Si se ingresó una nueva contraseña, actualizarla
+        if (password.isNotEmpty) {
+          await user.updatePassword(password);
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Perfil actualizado con éxito.')));
+        Navigator.pop(context); // Volver atrás
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
     }
   }
 
@@ -47,20 +75,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           children: [
             TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Nueva contraseña'),
-              obscureText: true,
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Nombre'),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _updatePassword,
-              child: Text('Cambiar contraseña'),
+            DropdownButtonFormField<int>(
+              value: _age,
+              decoration: InputDecoration(labelText: 'Edad'),
+              items: List.generate(96, (index) {
+                int age = 5 + index; // Desde 5 hasta 100
+                return DropdownMenuItem<int>(
+                  value: age,
+                  child: Text('$age años'),
+                );
+              }),
+              onChanged: (value) {
+                setState(() {
+                  _age = value;
+                });
+              },
             ),
-            if (_statusMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Text(_statusMessage, style: TextStyle(color: Colors.red)),
-              ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(labelText: 'Nueva Contraseña'),
+              obscureText: true,
+            ),
+            SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: _updateProfile,
+              child: Text('Guardar cambios'),
+            ),
           ],
         ),
       ),
