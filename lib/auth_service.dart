@@ -1,10 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  // Use a different approach for web vs mobile
+  final GoogleSignIn _googleSignIn = kIsWeb 
+      ? GoogleSignIn() 
+      : GoogleSignIn();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Método de registro de usuario
@@ -26,6 +30,7 @@ class AuthService {
 
       return user;
     } catch (e) {
+      print('Error en el registro: $e');
       throw e;
     }
   }
@@ -39,6 +44,7 @@ class AuthService {
       );
       return userCredential.user;
     } catch (e) {
+      print('Error en el inicio de sesión: $e');
       throw e;
     }
   }
@@ -46,16 +52,29 @@ class AuthService {
   // Método de inicio de sesión con Google
   Future<User?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
+      if (kIsWeb) {
+        // Web-specific implementation
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        
+        // Optional: Add scopes if needed
+        googleProvider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+        
+        // Sign in directly with Firebase Auth for web
+        UserCredential userCredential = await _auth.signInWithPopup(googleProvider);
+        return userCredential.user;
+      } else {
+        // Mobile implementation (unchanged)
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) return null;
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
-      return userCredential.user;
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        UserCredential userCredential = await _auth.signInWithCredential(credential);
+        return userCredential.user;
+      }
     } catch (e) {
       print('Error en el inicio de sesión con Google: $e');
       throw e;
