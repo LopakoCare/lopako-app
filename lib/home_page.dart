@@ -3,6 +3,7 @@ import 'package:lopako_app_lis/auth_service.dart';
 import 'login_page.dart';
 import 'profile_page.dart';
 import 'routines_page.dart';
+import 'calendar_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -60,6 +61,7 @@ class _HomePageState extends State<HomePage> {
     ),
     //Página de rutinas
     const RoutinesPage(),
+    CalendarPage(),  // Add calendar page
   ];
 
   @override
@@ -100,6 +102,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'Rutinas',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Calendario',
           ),
         ],
       ),
