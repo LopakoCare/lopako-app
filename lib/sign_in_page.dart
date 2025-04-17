@@ -93,7 +93,7 @@ class _SignInPageState extends State<SignInPage> {
               child: Text('Continuar'),
             ),
             SizedBox(height: 10),
-            ElevatedButton.icon(
+            ElevatedButton(
               onPressed: () async {
                 print("Iniciando sesión con Google...");
                 final user = await auth.signInWithGoogle();
@@ -108,8 +108,22 @@ class _SignInPageState extends State<SignInPage> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al iniciar sesión con Google')));
                 }
               },
-              icon: Icon(Icons.login),
-              label: Text('Sign in with Google'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Theme.of(context).primaryColor,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/google_logo.png',
+                    height: 24.0,
+                  ),
+                  SizedBox(width: 12.0),
+                  Text('Sign in with Google'),
+                ],
+              ),
             ),
           ],
         ),
