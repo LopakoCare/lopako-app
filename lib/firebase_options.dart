@@ -87,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'lopako-4488a.firebasestorage.app',
     measurementId: 'G-BEQKQ5KNZS',
   );
+
 }

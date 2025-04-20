@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "393126444127-h6eapihv447bhmo4232107l2cgl8ac4k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lopako_app_lis",
+            "certificate_hash": "950729c232f646a1409a61f5b15d72811ae177ab"
+          }
+        },
+        {
           "client_id": "393126444127-sushnt284ik41jiiuv9sm8f9gda5p71h.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,57 @@
             {
               "client_id": "393126444127-sushnt284ik41jiiuv9sm8f9gda5p71h.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "393126444127-9hdc8oiat7v6i6vtuggaur5aseto1kj5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "n"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393126444127:android:9d45809929efbce3496fea",
+        "android_client_info": {
+          "package_name": "com.lopako.lopako_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393126444127-gag9ocsfsrn5nqgnhcv2mrrbg9lf1i7n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lopako.lopako_app",
+            "certificate_hash": "950729c232f646a1409a61f5b15d72811ae177ab"
+          }
+        },
+        {
+          "client_id": "393126444127-sushnt284ik41jiiuv9sm8f9gda5p71h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWT5DIJEOfHeyfNSkolo_VD484bewQg4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393126444127-sushnt284ik41jiiuv9sm8f9gda5p71h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "393126444127-9hdc8oiat7v6i6vtuggaur5aseto1kj5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "n"
+              }
             }
           ]
         }
