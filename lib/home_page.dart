@@ -8,6 +8,8 @@ import 'profile_page.dart';
 import 'routines_page.dart';
 import 'calendar_page.dart';
 import 'services/firebase_user_utils.dart'; // Importa la función reutilizable obtenerFamilyIdActual
+import 'package:lopako_app_lis/activities_page.dart'; // ✅ NUEVO
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -126,11 +128,18 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 10),
                     // Lista de rutinas asociadas al grupo familiar
-                    //TODO: Hacer q al clicar en la rutina parezcan las actividades asignadas a esta
                     ...rutinas.map((rutina) => ListTile(
                       title: Text(rutina['title'] ?? 'Sin título'),
-                      subtitle: Text(rutina['description'] ?? ''),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ActivitiesPage(rutina: rutina),
+                          ),
+                        );
+                      },
                     )),
+
                   ],
                 );
               },
