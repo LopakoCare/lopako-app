@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lopako_app_lis/services/firebase_user_utils.dart';
+
 
 //Modelo de una actividad
 class Actividad {
@@ -44,22 +46,6 @@ class RoutinesPage extends StatelessWidget {
     return actividades;
   }
 
-  //Función para obtener family_id del user
-  Future<String?> obtenerFamilyIdActual() async {
-    final email = FirebaseAuth.instance.currentUser?.email;
-    if (email == null) return null;
-
-    final snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .limit(1)
-        .get();
-
-    if (snapshot.docs.isNotEmpty) {
-      return snapshot.docs.first.data()['family_id'];
-    }
-    return null;
-  }
 
   Future<void> anadirRutinaAFamilia(DocumentReference rutinaRef, BuildContext context) async {
     // Se obtiene el ID del grupo familiar del usuario autenticado
