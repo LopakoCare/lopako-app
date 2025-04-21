@@ -43,7 +43,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter your password",
     ),
     "helloWorld": MessageLookupByLibrary.simpleMessage("Hello World"),
-    "home": MessageLookupByLibrary.simpleMessage("Home"),
+    "routines": MessageLookupByLibrary.simpleMessage("Home"),
     "invalidAge": MessageLookupByLibrary.simpleMessage(
       "The age must be a valid number.",
     ),

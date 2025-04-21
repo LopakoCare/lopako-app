@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lopako_app_lis/auth_service.dart';
+import 'auth_service.dart';
 import 'login_page.dart';
 import 'profile_page.dart';
 import 'routines_page.dart';

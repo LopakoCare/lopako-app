@@ -57,7 +57,7 @@ class S {
 
   /// `Home`
   String get home {
-    return Intl.message('Home', name: 'home', desc: '', args: []);
+    return Intl.message('Home', name: 'routines', desc: '', args: []);
   }
 
   /// `Calendar`

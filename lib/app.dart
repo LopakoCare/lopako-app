@@ -7,7 +7,7 @@ import 'core/services/auth_service.dart';
 import 'features/navigation/screens/app_wrapper.dart';
 import 'features/auth/controllers/auth_controller.dart';
 import 'features/auth/screens/auth_screen.dart';
-import 'features/home/screens/home_screen.dart';
+import 'features/routines/screens/home_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
           Locale('en'),
           Locale('es'),
         ],
+        locale: const Locale('es'),
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           '/auth': (context) => const AuthScreen(),
-          '/home': (context) => const HomeScreen(),
+          '/routines': (context) => const RoutinesScreen(),
         },
       ),
     );

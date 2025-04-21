@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
-import '../../home/screens/home_screen.dart';
+import '../../routines/screens/home_screen.dart';
 import '../../calendar/screens/calendar_screen.dart';
 import '../../settings/screens/settings_screen.dart';
 
@@ -52,7 +52,7 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          HomeScreen(key: PageStorageKey('home')),
+          RoutinesScreen(key: PageStorageKey('routines')),
           CalendarScreen(key: PageStorageKey('calendar')),
           SettingsScreen(key: PageStorageKey('settings')),
         ],
