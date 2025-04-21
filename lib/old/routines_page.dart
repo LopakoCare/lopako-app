@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lopako_app_lis/services/firebase_user_utils.dart';
+
 
 //Modelo de una actividad
 class Actividad {
@@ -42,6 +45,70 @@ class RoutinesPage extends StatelessWidget {
 
     return actividades;
   }
+
+
+  Future<void> anadirRutinaAFamilia(DocumentReference rutinaRef, BuildContext context) async {
+    // Se obtiene el ID del grupo familiar del usuario autenticado
+    final familyId = await obtenerFamilyIdActual();
+
+    if (familyId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se pudo obtener el ID familiar')),
+      );
+      return;
+    }
+
+    final collectionRef = FirebaseFirestore.instance.collection('familiar_circle_routines');
+
+    // Busca el documento donde el campo family_id coincida
+    final querySnapshot = await collectionRef
+        .where('family_id', isEqualTo: familyId)
+        .limit(1)
+        .get();
+
+    DocumentReference? docRef;
+    List<dynamic> actuales = [];
+
+    // Si ya existe un documento para ese family_id
+    if (querySnapshot.docs.isNotEmpty) {
+      final doc = querySnapshot.docs.first;
+      docRef = doc.reference;
+      actuales = doc.data()['associated_routines'] ?? [];
+    } else {
+      // Si no existe, se prepara para crear un nuevo documento
+      docRef = collectionRef.doc(); // nuevo ID automático
+    }
+
+    // Si ya hay 3 rutinas asociadas, no se permite añadir más
+    if (actuales.length >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ya hay 3 rutinas asociadas.')),
+      );
+      return;
+    }
+
+    // Verifica si la rutina ya está añadida
+    final yaExiste = actuales.any((ref) => ref is DocumentReference && ref.id == rutinaRef.id);
+
+    if (yaExiste) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Esta rutina ya está añadida.')),
+      );
+      return;
+    }
+
+    // Actualiza el documento existente o crea uno nuevo con el campo family_id
+    await docRef.set({
+      'family_id': familyId,
+      'associated_routines': FieldValue.arrayUnion([rutinaRef])
+    }, SetOptions(merge: true));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Rutina añadida correctamente')),
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +199,20 @@ class RoutinesPage extends StatelessWidget {
                                   Text('${actividad.title}'),
                                 ],
                               )),
+                              const SizedBox(height: 16),
+
+                              // 🟣 Botón "Añadir" debajo de las actividades
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.purple, // Lila
+                                  foregroundColor: Colors.white,  // Texto en blanco
+                                ),
+                                onPressed: () async {
+                                  final rutinaRef = rutinas[index].reference;
+                                  await anadirRutinaAFamilia(rutinaRef, context);
+                                },
+                                child: Text('Añadir'),
+                              ),
                             ],
                           ),
                       ],
