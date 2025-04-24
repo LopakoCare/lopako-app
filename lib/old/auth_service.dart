@@ -5,10 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  // Use a different approach for web vs mobile
-  final GoogleSignIn _googleSignIn = kIsWeb 
-      ? GoogleSignIn() 
-      : GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Método de registro de usuario
@@ -53,17 +50,31 @@ class AuthService {
   Future<User?> signInWithGoogle() async {
     try {
       if (kIsWeb) {
-        // Web-specific implementation
+        // Web implementation
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
         
-        // Optional: Add scopes if needed
-        googleProvider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-        
-        // Sign in directly with Firebase Auth for web
-        UserCredential userCredential = await _auth.signInWithPopup(googleProvider);
-        return userCredential.user;
+        try {
+          final UserCredential userCredential = await _auth.signInWithPopup(googleProvider);
+          final user = userCredential.user;
+          
+          if (user != null && userCredential.additionalUserInfo?.isNewUser == true) {
+            await _firestore.collection('users').doc(user.uid).set({
+              'email': user.email,
+              'name': user.displayName ?? 'Default Name',
+              'age': 18,
+            });
+          }
+          return user;
+        } catch (e) {
+          print('Error during web sign in: $e');
+          // Fallback to redirect if popup is blocked
+          await _auth.signInWithRedirect(googleProvider);
+          // Get redirect result
+          final userCred = await _auth.getRedirectResult();
+          return userCred.user;
+        }
       } else {
-        // Mobile implementation (unchanged)
+        // Mobile implementation
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
         if (googleUser == null) return null;
 
@@ -72,8 +83,20 @@ class AuthService {
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-        UserCredential userCredential = await _auth.signInWithCredential(credential);
-        return userCredential.user;
+
+        final UserCredential userCredential = await _auth.signInWithCredential(credential);
+        final user = userCredential.user;
+
+        // Save user data to Firestore if it's a new user
+        if (user != null && userCredential.additionalUserInfo?.isNewUser == true) {
+          await _firestore.collection('users').doc(user.uid).set({
+            'email': user.email,
+            'name': user.displayName ?? 'Default Name',
+            'age': 18,
+          });
+        }
+
+        return user;
       }
     } catch (e) {
       print('Error en el inicio de sesión con Google: $e');

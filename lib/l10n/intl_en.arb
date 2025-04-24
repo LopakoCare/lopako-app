@@ -27,5 +27,9 @@
   "signUp": "Sign up",
   "logout": "Log out",
   "or": "or",
-  "world": "Hello world!"
+  "world": "Hello world!",
+  "chatbot": "Chat Assistant",
+  "@chatbot": {
+    "description": "Label for the chatbot navigation item"
+  }
 }

@@ -27,5 +27,9 @@
   "signUp": "Registrarse",
   "logout": "Cerrar sesión",
   "or": "o",
-  "world": "Hola mundo!"
+  "world": "Hola mundo!",
+  "chatbot": "Asistente Virtual",
+  "@chatbot": {
+    "description": "Etiqueta para el elemento de navegación del chatbot"
+  }
 }

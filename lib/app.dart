@@ -8,6 +8,7 @@ import 'features/navigation/screens/app_wrapper.dart';
 import 'features/auth/controllers/auth_controller.dart';
 import 'features/auth/screens/auth_screen.dart';
 import 'features/routines/screens/home_screen.dart';
+import 'features/chatbot/screens/chatbot_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/auth': (context) => const AuthScreen(),
           '/routines': (context) => const RoutinesScreen(),
+          '/chatbot': (context) => const ChatbotScreen(),
         },
       ),
     );
