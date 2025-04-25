@@ -1,3 +1,3 @@
 class ApiKeys {
-  static const String deepseekApiKey = 'sk-53fea88a58694e5593990bb9bf25605f';
+  static const String deepseekApiKey = 'YOUR_DEEPSEEK_API_KEY';
 }
