@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           '/auth': (context) => const AuthScreen(),
-          '/routines': (context) => const RoutinesScreen(),
+          '/routines': (context) => const HomeScreen(),
         },
       ),
     );

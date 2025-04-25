@@ -76,4 +76,41 @@ class RoutinesController {
 
     return 'Rutina añadida correctamente';
   }
+
+  // Elimina una rutina del grupo familiar del usuario autenticado
+  Future<String> completarRutinaYEliminar(DocumentReference rutinaRef) async {
+    // Obtiene el ID del grupo familiar del usuario autenticado
+    final familyId = await _familiarController.obtenerFamilyIdActual();
+
+    // Si no se pudo obtener el ID, retorna un mensaje de error
+    if (familyId == null) {
+      return 'No se pudo obtener el ID familiar';
+    }
+
+    // Referencia a la colección donde se almacenan las rutinas familiares
+    final collectionRef = FirebaseFirestore.instance.collection('familiar_circle_routines');
+
+    // Busca el documento correspondiente al family_id en la colección
+    final querySnapshot = await collectionRef
+        .where('family_id', isEqualTo: familyId)
+        .limit(1)
+        .get();
+
+    // Si no se encuentra un documento para ese family_id, retorna error
+    if (querySnapshot.docs.isEmpty) {
+      return 'No se encontró ninguna rutina asociada al grupo familiar';
+    }
+
+    // Obtiene la referencia del documento que contiene las rutinas asociadas
+    final docRef = querySnapshot.docs.first.reference;
+
+    // Actualiza el documento eliminando la rutina referenciada del array
+    await docRef.update({
+      'associated_routines': FieldValue.arrayRemove([rutinaRef])
+    });
+
+    // Retorna un mensaje de éxito
+    return 'Rutina marcada como completada';
+  }
+
 }

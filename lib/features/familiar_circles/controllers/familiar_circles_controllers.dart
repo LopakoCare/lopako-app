@@ -22,7 +22,7 @@ class FamiliarRoutinesController {
     return null;
   }
 
-  // Carga las rutinas asociadas al family_id del usuario autenticado
+// Carga las rutinas asociadas al family_id del usuario autenticado
   Future<List<Map<String, dynamic>>> cargarRutinasAsignadas() async {
     final familyId = await obtenerFamilyIdActual();
     if (familyId == null) return [];
@@ -44,10 +44,15 @@ class FamiliarRoutinesController {
       if (ref is DocumentReference) {
         final doc = await ref.get();
         final data = doc.data() as Map<String, dynamic>?;
-        if (data != null) rutinas.add(data);
+
+        if (data != null) {
+          data['__ref__'] = ref; //Añade la referencia como campo especial
+          rutinas.add(data);
+        }
       }
     }
 
     return rutinas;
   }
+
 }
