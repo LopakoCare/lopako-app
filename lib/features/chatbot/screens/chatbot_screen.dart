@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/deepseek_service.dart';
 import 'package:lopako_app_lis/config/api_keys.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({Key? key}) : super(key: key);
@@ -76,12 +77,30 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       color: isUser ? Theme.of(context).primaryColor : Colors.grey[200],
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Text(
-                      message['text']!,
-                      style: TextStyle(
-                        color: isUser ? Colors.white : Colors.black,
-                      ),
-                    ),
+                    child: message['sender'] == 'bot' 
+                      ? MarkdownBody(
+                          data: message['text']!,
+                          styleSheet: MarkdownStyleSheet(
+                            p: TextStyle(
+                              color: Colors.black,
+                            ),
+                            h3: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                            strong: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          message['text']!,
+                          style: TextStyle(
+                            color: isUser ? Colors.white : Colors.black,
+                          ),
+                        ),
                   ),
                 );
               },
