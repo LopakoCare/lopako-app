@@ -16,6 +16,31 @@ class Actividad {
 class RoutinesController {
   final FamiliarRoutinesController _familiarController = FamiliarRoutinesController();
 
+  // Obtiene todas las rutinas
+  Future<List<Actividad>> obtenerTodasLasRutinas() async{
+    final querySnapshot = await FirebaseFirestore.instance.collection('routines').get();
+    final List<Actividad> actividades = querySnapshot.docs.map((doc) => Actividad.fromFirestore(doc.data())).toList();
+
+    return actividades;
+  }
+
+  // Busca rutinas por título (directamente en Firestore)
+  Future<List<DocumentReference>> buscarRutinasPorTitulo(String query) async {
+    final collectionRef = FirebaseFirestore.instance.collection('routines');
+    final querySnapshot = await collectionRef
+        .where('title', isGreaterThanOrEqualTo: query)
+        .where('title', isLessThan: query + 'z')
+        .get();
+
+    final List<DocumentReference> resultados = querySnapshot.docs.map((doc) => doc.reference).toList();
+    return resultados;
+  }
+  
+  List<Actividad> buscarRutinasPorTituloLocal(List<Actividad> rutinas, String query) {
+    query = query.toLowerCase();
+    return rutinas.where((rutina) => rutina.title.toLowerCase().contains(query)).toList();
+  }
+
   // Carga las actividades referenciadas en una rutina
   Future<List<Actividad>> obtenerActividades(List<dynamic> referencias) async {
     List<Actividad> actividades = [];
