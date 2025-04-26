@@ -161,19 +161,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
       margin: const EdgeInsets.symmetric(vertical: 5),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: _getBackgroundColor(event.iconType),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         children: [
-          const Icon(Icons.event_note),
+          Icon(_getIconData(event.iconType)),
           const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(event.title, style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              Text("${DateFormat('HH:mm').format(event.date)} - ${DateFormat('HH:mm').format(endTime)}"),
+              Text("${DateFormat('HH:mm').format(event.date)} - ${DateFormat('HH:mm').format(event.date.add(Duration(minutes: event.durationMinutes ?? 60)))}"),
             ],
           )
         ],
