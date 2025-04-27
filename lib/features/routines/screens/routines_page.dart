@@ -13,6 +13,7 @@ class _RoutinesPageState extends State<RoutinesPage> {
   final RoutinesController _controller = RoutinesController();
   final TextEditingController _searchController = TextEditingController();
   List<DocumentReference> _searchResults = [];
+  Set<String> _categoriasSeleccionadas = {}; // <-- CAMBIA: ahora es un Set para múltiples categorías
 
   @override
   void initState() {
@@ -38,9 +39,7 @@ class _RoutinesPageState extends State<RoutinesPage> {
       });
       return;
     }
-
     final results = await _controller.buscarRutinasPorTitulo(query);
-
     setState(() {
       _searchResults = results;
     });
@@ -109,7 +108,7 @@ class _RoutinesPageState extends State<RoutinesPage> {
                       StreamBuilder<QuerySnapshot>(
                           stream: snapshotStream,
                           builder: (context, snapshot) {
-                            if (snapshot.hasData){
+                            if (snapshot.hasData) {
                               final rutinaRef = snapshot.data!.docs.elementAt(index).reference;
                               return ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -124,8 +123,7 @@ class _RoutinesPageState extends State<RoutinesPage> {
                                 },
                                 child: const Text('Añadir'),
                               );
-                            }
-                            else{
+                            } else {
                               return Container();
                             }
                           }
@@ -164,50 +162,101 @@ class _RoutinesPageState extends State<RoutinesPage> {
           ),
         ),
       ),
-      body: _searchController.text.isNotEmpty
-          ? FutureBuilder<List<Map<String, dynamic>>>(
-        future: _obtenerDatosRutinasPorRef(_searchResults),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          final rutinas = snapshot.data ?? [];
-          if (rutinas.isEmpty) {
-            return const Center(child: Text('No se encontraron rutinas.'));
-          }
-          return ListView.builder(
-            itemCount: rutinas.length,
-            itemBuilder: (context, index) {
-              return _buildRutinaCard(rutinas[index], index, rutinasRef.snapshots());
-            },
-          );
-        },
-      )
-          : StreamBuilder<QuerySnapshot>(
-        stream: rutinasRef.snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+      body: Column(
+        children: [
+          // BOTONES DE CATEGORÍAS - Selección múltiple
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('categories').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final categoriesDocs = snapshot.data!.docs;
+              if (categoriesDocs.isEmpty) {
+                return const SizedBox();
+              }
+              return Container(
+                color: Colors.grey[200],
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: categoriesDocs.map((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      final categoryName = data['name'] ?? 'Sin nombre';
+                      final seleccionada = _categoriasSeleccionadas.contains(categoryName);
 
-          final rutinas = snapshot.data?.docs ?? [];
-          if (rutinas.isEmpty) {
-            return const Center(child: Text('No hay rutinas disponibles.'));
-          }
-          return ListView.builder(
-            itemCount: rutinas.length,
-            itemBuilder: (context, index) {
-              final rutina = rutinas[index].data() as Map<String, dynamic>;
-              return _buildRutinaCard(rutina, index, rutinasRef.snapshots());
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: FilterChip(
+                          label: Text(categoryName),
+                          selected: seleccionada,
+                          selectedColor: Colors.purple[200],
+                          showCheckmark: false,
+                          onSelected: (isSelected) {
+                            setState(() {
+                              if (isSelected) {
+                                _categoriasSeleccionadas.add(categoryName);
+                              } else {
+                                _categoriasSeleccionadas.remove(categoryName);
+                              }
+                            });
+                          },
+                        ),
+
+                      );
+                    }).toList(),
+                  ),
+                ),
+              );
             },
-          );
-        },
+          ),
+          // RESULTADOS
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: rutinasRef.snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                final rutinasDocs = snapshot.data?.docs ?? [];
+                if (rutinasDocs.isEmpty) {
+                  return const Center(child: Text('No hay rutinas disponibles.'));
+                }
+
+                final rutinasFiltradas = rutinasDocs.where((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final categorias = data['categories'] as Map<String, dynamic>?;
+                  if (categorias == null) return false;
+
+                  if (_categoriasSeleccionadas.isEmpty) {
+                    return true; // Si no hay filtros seleccionados, muestra todas
+                  }
+                  // Si alguna categoría de la rutina coincide con alguna seleccionada
+                  return _categoriasSeleccionadas.every((selected) => categorias.keys.contains(selected));
+                }).toList();
+
+                if (rutinasFiltradas.isEmpty) {
+                  return const Center(child: Text('No hay rutinas para estas categorías.'));
+                }
+
+                return ListView.builder(
+                  itemCount: rutinasFiltradas.length,
+                  itemBuilder: (context, index) {
+                    final rutina = rutinasFiltradas[index].data() as Map<String, dynamic>;
+                    return _buildRutinaCard(rutina, index, rutinasRef.snapshots());
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
