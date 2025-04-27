@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/services/auth_service.dart';
 import '../models/auth_state_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthController extends ChangeNotifier {
   final AuthService _authService;
@@ -155,21 +156,19 @@ class AuthController extends ChangeNotifier {
   }
 
   // Sign in with Google
-  Future<bool> signInWithGoogle() async {
-    _state = _state.copyWith(
-      isLoading: true,
-    );
+  Future<UserCredential> signInWithGoogle() async {
+    _state = _state.copyWith(isLoading: true);
     notifyListeners();
-
+    
     try {
-      await _authService.signInWithGoogle();
+      final userCredential = await _authService.signInWithGoogle();
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
-      return true;
+      return userCredential;
     } catch (e) {
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
-      throw e;
+      rethrow;
     }
   }
 

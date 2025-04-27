@@ -345,9 +345,10 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _signInWithGoogle(AuthController controller) {
-    controller.signInWithGoogle().then((success) {
-      // TODO: Handle success case
+    controller.signInWithGoogle().then((result) {
+      print("Google sign in successful");
     }).catchError((error) {
+      print("Detailed Google sign in error: $error");
       if (error is! FirebaseAuthException || error.code != 'ERROR_ABORTED_BY_USER') {
         _showAuthErrorDialog(error.toString());
       }

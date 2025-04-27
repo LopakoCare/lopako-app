@@ -64,3 +64,6 @@ app.*.map.json
 
 # Flutter Version Management (FVM) - si usas FVM
 .fvm/
+lib/config/api_keys.dart
+lib/config/api_keys.dart
+lib/config/api_keys.dart
