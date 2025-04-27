@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
 import 'package:provider/provider.dart';
+import '../../../../generated/l10n.dart';
 import '../controllers/auth_controller.dart';
 import '../models/auth_state_model.dart';
 import '../widgets/auth_button.dart';
@@ -33,7 +33,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = S.of(context);
     final authController = Provider.of<AuthController>(context);
     final state = authController.state;
 
@@ -273,7 +273,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   // Helper method to show error dialogs for external auth providers
   void _showAuthErrorDialog(String errorMessage) {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = S.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -290,7 +290,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   // Helper methods
-  String _getTitleText(AuthStep step, AppLocalizations localizations) {
+  String _getTitleText(AuthStep step, S localizations) {
     switch (step) {
       case AuthStep.emailInput:
         return localizations.signInTitle;
@@ -301,7 +301,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  String _getButtonText(AuthStep step, AppLocalizations localizations) {
+  String _getButtonText(AuthStep step, S localizations) {
     switch (step) {
       case AuthStep.emailInput:
         return localizations.continue_;

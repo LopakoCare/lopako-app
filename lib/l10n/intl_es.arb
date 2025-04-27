@@ -27,5 +27,17 @@
   "signUp": "Registrarse",
   "logout": "Cerrar sesión",
   "or": "o",
-  "world": "Hola mundo!"
+  "world": "Hola mundo!",
+  "userNotAuthenticated": "Usuario no autenticado",
+  "profileUpdateError": "Error al actualizar el perfil: ",
+  "routinesUpdateError": "Error al actualizar las rutinas: ", 
+  "editProfile": "Editar Perfil",
+  "saveChanges": "Guardar Cambios",
+  "editRoutines": "Editar Rutinas",
+  "passwordsDoNotMatch": "Las contraseñas no coinciden",
+  "profileUpdated": "Perfil actualizado exitosamente",
+  "routine": "Rutina",
+  "delete": "Eliminar",
+  "addRoutine": "Agregar rutina",
+  "routinesUpdated": "Rutinas actualizadas exitosamente"
 }
