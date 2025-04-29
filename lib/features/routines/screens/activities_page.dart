@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/features/routines/controllers/activities_controller.dart';
+import 'activity_details_page.dart'; // Importa la nueva página de detalles
 
 class ActivitiesPage extends StatefulWidget {
   final Map<String, dynamic> rutina;
@@ -12,19 +13,19 @@ class ActivitiesPage extends StatefulWidget {
 
 class _ActivitiesPageState extends State<ActivitiesPage> {
   late Future<List<Map<String, dynamic>>> _actividadesFuturas;
-  final ActivitiesController _controller = ActivitiesController(); // Declaramos el controlador
+  final ActivitiesController _controller = ActivitiesController();
 
   @override
   void initState() {
     super.initState();
-    _actividadesFuturas = _controller.cargarActividadesDesdeRutina(widget.rutina); // Usamos el controlador
+    _actividadesFuturas = _controller.cargarActividadesDesdeRutina(widget.rutina);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.rutina['title'] ?? 'Rutina'),
+        title: const Text('Actividades de la rutina'),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _actividadesFuturas,
@@ -44,41 +45,22 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
             itemBuilder: (context, index) {
               final actividad = actividades[index];
 
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        actividad['title'] ?? 'Sin título',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      if (actividad['description'] != null)
-                        Text(actividad['description']),
-                      if (actividad['tipo'] != null)
-                        Text('Tipo: ${actividad['tipo']}'),
-                      if (actividad['icono'] != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Image.network(
-                            actividad['icono'],
-                            height: 50,
-                            errorBuilder: (_, __, ___) =>
-                            const Icon(Icons.image_not_supported),
-                          ),
-                        ),
-                      if (actividad['enlaces'] != null)
-                        Text('Enlaces: ${actividad['enlaces']}'),
-                      if (actividad['audios'] != null)
-                        Text('Audios: ${actividad['audios']}'),
-                      if (actividad['imagenes'] != null)
-                        Text('Imágenes: ${actividad['imagenes']}'),
-                    ],
-                  ),
+              return ListTile(
+                title: Text(
+                  actividad['title'] ?? 'Sin título',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ActivityDetailsPage(
+                        actividad: actividad,
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );

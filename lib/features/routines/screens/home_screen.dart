@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
 import 'package:lopako_app_lis/features/routines/screens/activities_page.dart';
-import 'package:lopako_app_lis/features/routines/screens/routines_page.dart';
+import 'package:lopako_app_lis/features/routines/screens/discover_routines_page.dart';
+import 'package:lopako_app_lis/features/routines/screens/routine_details_page.dart';
 import 'package:lopako_app_lis/features/familiar_circles/controllers/familiar_circles_controllers.dart';
 import 'package:lopako_app_lis/features/routines/controllers/routines_controller.dart';
 
