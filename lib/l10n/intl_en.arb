@@ -27,5 +27,17 @@
   "signUp": "Sign up",
   "logout": "Log out",
   "or": "or",
-  "world": "Hello world!"
+  "world": "Hello world!",
+  "userNotAuthenticated": "User not authenticated",
+  "profileUpdateError": "Error updating profile: ",
+  "routinesUpdateError": "Error updating routines: ",
+  "editProfile": "Edit Profile",
+  "saveChanges": "Save Changes",
+  "editRoutines": "Edit Routines",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "profileUpdated": "Profile updated successfully",
+  "routine": "Routine",
+  "delete": "Delete",
+  "addRoutine": "Add routine",
+  "routinesUpdated": "Routines updated successfully"
 }

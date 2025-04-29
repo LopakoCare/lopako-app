@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
-import 'package:provider/provider.dart';
+import 'package:lopako_app_lis/generated/l10n.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -12,13 +11,13 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = S.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.calendar),
       ),
       body: Center(
-        child: Text('Hello world!'),
+        child: Text(localizations.world),
       ),
     );
   }

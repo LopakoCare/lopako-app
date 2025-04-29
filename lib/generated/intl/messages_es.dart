@@ -22,7 +22,79 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "helloWorld": MessageLookupByLibrary.simpleMessage("Hola Mundo"),
-    "routines": MessageLookupByLibrary.simpleMessage("Inicio"),
+    "addRoutine": MessageLookupByLibrary.simpleMessage("Agregar rutina"),
+    "age": MessageLookupByLibrary.simpleMessage("Edad"),
+    "ageRequired": MessageLookupByLibrary.simpleMessage(
+      "La edad es obligatoria.",
+    ),
+    "authError": MessageLookupByLibrary.simpleMessage(
+      "Ha ocurrido un error durante el proceso de autenticación. Por favor, inténtalo de nuevo.",
+    ),
+    "back": MessageLookupByLibrary.simpleMessage("Volver"),
+    "calendar": MessageLookupByLibrary.simpleMessage("Calendario"),
+    "continueWithApple": MessageLookupByLibrary.simpleMessage(
+      "Continuar con Apple",
+    ),
+    "continueWithGoogle": MessageLookupByLibrary.simpleMessage(
+      "Continuar con Google",
+    ),
+    "continue_": MessageLookupByLibrary.simpleMessage("Continuar"),
+    "createAccount": MessageLookupByLibrary.simpleMessage("Crear una cuenta"),
+    "delete": MessageLookupByLibrary.simpleMessage("Eliminar"),
+    "editProfile": MessageLookupByLibrary.simpleMessage("Editar Perfil"),
+    "editRoutines": MessageLookupByLibrary.simpleMessage("Editar Rutinas"),
+    "email": MessageLookupByLibrary.simpleMessage("Correo electrónico"),
+    "emailRequired": MessageLookupByLibrary.simpleMessage(
+      "El correo electrónico es obligatorio.",
+    ),
+    "enterPassword": MessageLookupByLibrary.simpleMessage(
+      "Introduce tu contraseña",
+    ),
+    "home": MessageLookupByLibrary.simpleMessage("Inicio"),
+    "invalidAge": MessageLookupByLibrary.simpleMessage(
+      "La edad debe ser un número válido.",
+    ),
+    "invalidEmailFormat": MessageLookupByLibrary.simpleMessage(
+      "La dirección de correo electrónico no es válida.",
+    ),
+    "logout": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
+    "name": MessageLookupByLibrary.simpleMessage("Nombre"),
+    "nameRequired": MessageLookupByLibrary.simpleMessage(
+      "El nombre es obligatorio.",
+    ),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
+    "or": MessageLookupByLibrary.simpleMessage("o"),
+    "password": MessageLookupByLibrary.simpleMessage("Contraseña"),
+    "passwordRequired": MessageLookupByLibrary.simpleMessage(
+      "La contraseña es obligatoria.",
+    ),
+    "passwordTooShort": MessageLookupByLibrary.simpleMessage(
+      "La contraseña debe tener al menos 6 caracteres.",
+    ),
+    "passwordsDoNotMatch": MessageLookupByLibrary.simpleMessage(
+      "Las contraseñas no coinciden",
+    ),
+    "profileUpdateError": MessageLookupByLibrary.simpleMessage(
+      "Error al actualizar el perfil: ",
+    ),
+    "profileUpdated": MessageLookupByLibrary.simpleMessage(
+      "Perfil actualizado exitosamente",
+    ),
+    "routine": MessageLookupByLibrary.simpleMessage("Rutina"),
+    "routinesUpdateError": MessageLookupByLibrary.simpleMessage(
+      "Error al actualizar las rutinas: ",
+    ),
+    "routinesUpdated": MessageLookupByLibrary.simpleMessage(
+      "Rutinas actualizadas exitosamente",
+    ),
+    "saveChanges": MessageLookupByLibrary.simpleMessage("Guardar Cambios"),
+    "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
+    "signIn": MessageLookupByLibrary.simpleMessage("Acceder"),
+    "signInTitle": MessageLookupByLibrary.simpleMessage("Acceder"),
+    "signUp": MessageLookupByLibrary.simpleMessage("Registrarse"),
+    "userNotAuthenticated": MessageLookupByLibrary.simpleMessage(
+      "Usuario no autenticado",
+    ),
+    "world": MessageLookupByLibrary.simpleMessage("Hola mundo!"),
   };
 }

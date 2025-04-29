@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'generated/l10n.dart';
 
 import 'core/services/auth_service.dart';
 import 'features/navigation/screens/app_wrapper.dart';
@@ -30,11 +32,13 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: const [
-          Locale('en'),
-          Locale('es'),
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
+        supportedLocales: S.delegate.supportedLocales,
         locale: const Locale('es'),
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
