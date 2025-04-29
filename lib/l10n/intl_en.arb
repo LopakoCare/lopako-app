@@ -3,7 +3,6 @@
   "home": "Home",
   "calendar": "Calendar",
   "settings": "Settings",
-  "helloWorld": "Hello World",
   "signIn": "Sign In",
   "email": "Email",
   "emailRequired": "Email is required.",
@@ -26,5 +25,6 @@
   "createAccount": "Create an account",
   "continue_": "Continue",
   "signUp": "Sign up",
-  "logout": "Log out"
+  "logout": "Log out",
+  "or": "or"
 }

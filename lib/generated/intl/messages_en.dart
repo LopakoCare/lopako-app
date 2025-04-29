@@ -42,7 +42,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterPassword": MessageLookupByLibrary.simpleMessage(
       "Enter your password",
     ),
-    "helloWorld": MessageLookupByLibrary.simpleMessage("Hello World"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "invalidAge": MessageLookupByLibrary.simpleMessage(
       "The age must be a valid number.",
@@ -54,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "nameRequired": MessageLookupByLibrary.simpleMessage("Name is required."),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
+    "or": MessageLookupByLibrary.simpleMessage("or"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "passwordRequired": MessageLookupByLibrary.simpleMessage(
       "Password is required.",

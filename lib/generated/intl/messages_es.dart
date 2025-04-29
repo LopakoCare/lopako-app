@@ -22,7 +22,54 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "helloWorld": MessageLookupByLibrary.simpleMessage("Hola Mundo"),
+    "age": MessageLookupByLibrary.simpleMessage("Edad"),
+    "ageRequired": MessageLookupByLibrary.simpleMessage(
+      "La edad es obligatoria.",
+    ),
+    "authError": MessageLookupByLibrary.simpleMessage(
+      "Ha ocurrido un error durante el proceso de autenticación. Por favor, inténtalo de nuevo.",
+    ),
+    "back": MessageLookupByLibrary.simpleMessage("Volver"),
+    "calendar": MessageLookupByLibrary.simpleMessage("Calendario"),
+    "continueWithApple": MessageLookupByLibrary.simpleMessage(
+      "Continuar con Apple",
+    ),
+    "continueWithGoogle": MessageLookupByLibrary.simpleMessage(
+      "Continuar con Google",
+    ),
+    "continue_": MessageLookupByLibrary.simpleMessage("Continuar"),
+    "createAccount": MessageLookupByLibrary.simpleMessage("Crear una cuenta"),
+    "email": MessageLookupByLibrary.simpleMessage("Correo electrónico"),
+    "emailRequired": MessageLookupByLibrary.simpleMessage(
+      "El correo electrónico es obligatorio.",
+    ),
+    "enterPassword": MessageLookupByLibrary.simpleMessage(
+      "Introduce tu contraseña",
+    ),
     "home": MessageLookupByLibrary.simpleMessage("Inicio"),
+    "invalidAge": MessageLookupByLibrary.simpleMessage(
+      "La edad debe ser un número válido.",
+    ),
+    "invalidEmailFormat": MessageLookupByLibrary.simpleMessage(
+      "La dirección de correo electrónico no es válida.",
+    ),
+    "logout": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
+    "name": MessageLookupByLibrary.simpleMessage("Nombre"),
+    "nameRequired": MessageLookupByLibrary.simpleMessage(
+      "El nombre es obligatorio.",
+    ),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
+    "or": MessageLookupByLibrary.simpleMessage("o"),
+    "password": MessageLookupByLibrary.simpleMessage("Contraseña"),
+    "passwordRequired": MessageLookupByLibrary.simpleMessage(
+      "La contraseña es obligatoria.",
+    ),
+    "passwordTooShort": MessageLookupByLibrary.simpleMessage(
+      "La contraseña debe tener al menos 6 caracteres.",
+    ),
+    "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
+    "signIn": MessageLookupByLibrary.simpleMessage("Acceder"),
+    "signInTitle": MessageLookupByLibrary.simpleMessage("Acceder"),
+    "signUp": MessageLookupByLibrary.simpleMessage("Registrarse"),
   };
 }

@@ -70,11 +70,6 @@ class S {
     return Intl.message('Settings', name: 'settings', desc: '', args: []);
   }
 
-  /// `Hello World`
-  String get helloWorld {
-    return Intl.message('Hello World', name: 'helloWorld', desc: '', args: []);
-  }
-
   /// `Sign In`
   String get signIn {
     return Intl.message('Sign In', name: 'signIn', desc: '', args: []);
@@ -248,6 +243,11 @@ class S {
   /// `Log out`
   String get logout {
     return Intl.message('Log out', name: 'logout', desc: '', args: []);
+  }
+
+  /// `or`
+  String get or {
+    return Intl.message('or', name: 'or', desc: '', args: []);
   }
 }
 

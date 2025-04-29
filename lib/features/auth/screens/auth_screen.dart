@@ -70,7 +70,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: localizations.email,
-                    border: const OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   enabled: state.currentStep == AuthStep.emailInput && !state.isLoading,
@@ -100,7 +99,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _passwordController,
                         decoration: InputDecoration(
                           labelText: localizations.password,
-                          border: const OutlineInputBorder(),
                         ),
                         obscureText: true,
                         enabled: !state.isLoading,
@@ -130,7 +128,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _nameController,
                         decoration: InputDecoration(
                           labelText: localizations.name,
-                          border: const OutlineInputBorder(),
                         ),
                         enabled: !state.isLoading,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -146,7 +143,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _ageController,
                         decoration: InputDecoration(
                           labelText: localizations.age,
-                          border: const OutlineInputBorder(),
                         ),
                         keyboardType: TextInputType.number,
                         enabled: !state.isLoading,
@@ -206,35 +202,42 @@ class _AuthScreenState extends State<AuthScreen> {
                 if (state.currentStep == AuthStep.emailInput)
                   Column(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                      Padding(
+                        padding: EdgeInsets.all(24.0),
                         child: Row(
                           children: [
                             Expanded(child: Divider()),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text('OR'),
+                              child: Text(localizations.or),
                             ),
                             Expanded(child: Divider()),
                           ],
                         ),
                       ),
-                      SocialSignInButton(
-                        text: localizations.continueWithGoogle,
-                        icon: 'assets/images/google_logo.png',
-                        onPressed: state.isLoading
-                            ? null
-                            : () => _signInWithGoogle(authController),
-                      ),
-                      const SizedBox(height: 12),
-                      if (Theme.of(context).platform == TargetPlatform.iOS)
-                        SocialSignInButton(
-                          text: localizations.continueWithApple,
-                          icon: 'assets/images/apple_logo.png',
-                          onPressed: state.isLoading
-                              ? null
-                              : () => _signInWithApple(authController),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          children: [
+                            SocialSignInButton(
+                              text: localizations.continueWithGoogle,
+                              icon: 'assets/images/google_logo.png',
+                              onPressed: state.isLoading
+                                  ? null
+                                  : () => _signInWithGoogle(authController),
+                            ),
+                            const SizedBox(height: 12),
+                            if (Theme.of(context).platform == TargetPlatform.iOS)
+                              SocialSignInButton(
+                                text: localizations.continueWithApple,
+                                icon: 'assets/images/apple_logo.png',
+                                onPressed: state.isLoading
+                                    ? null
+                                    : () => _signInWithApple(authController),
+                              ),
+                          ],
                         ),
+                      )
                     ],
                   ),
               ],

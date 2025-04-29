@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lopako_app_lis/core/constants/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,15 +27,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Lopako',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
+        theme: AppTheme.lightTheme,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: const [
           Locale('en'),
           Locale('es'),
         ],
+        locale: const Locale('es'),
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {

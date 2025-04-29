@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
+import 'package:lopako_app_lis/core/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 import '../../auth/controllers/auth_controller.dart';
 
@@ -31,6 +32,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ElevatedButton(
               onPressed: authController.signOut,
               child: Text(localizations.logout),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.danger
+              )
             ),
           ],
         ),
