@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
-              return AppWrapper(); // Esta es tu pantalla principal
+              return AppWrapper();
             }
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
