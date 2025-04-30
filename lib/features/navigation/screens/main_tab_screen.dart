@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
-import '../../home/screens/home_screen.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 import '../../routines/screens/home_screen.dart';
 import '../../calendar/screens/calendar_screen.dart';
