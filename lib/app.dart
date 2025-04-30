@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/core/constants/app_theme.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'generated/l10n.dart';
 
 import 'core/services/auth_service.dart';
 import 'features/navigation/screens/app_wrapper.dart';
 import 'features/auth/controllers/auth_controller.dart';
 import 'features/auth/screens/auth_screen.dart';
-import 'features/home/screens/home_screen.dart';
+import 'features/routines/screens/home_screen.dart';
+import 'features/calendar/controllers/calendar_controller.dart';
+import 'features/calendar/screens/calendar_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -23,16 +27,21 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AuthController>(
           create: (ctx) => AuthController(ctx.read<AuthService>()),
         ),
+        ChangeNotifierProvider<CalendarController>(
+          create: (_) => CalendarController(),
+        ),
       ],
       child: MaterialApp(
         title: 'Lopako',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: const [
-          Locale('en'),
-          Locale('es'),
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
+        supportedLocales: S.delegate.supportedLocales,
         locale: const Locale('es'),
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
@@ -47,7 +56,8 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           '/auth': (context) => const AuthScreen(),
-          '/home': (context) => const HomeScreen(),
+          '/routines': (context) => const HomeScreen(),
+          '/calendar': (context) => const CalendarScreen(),
         },
       ),
     );

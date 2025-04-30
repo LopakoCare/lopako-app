@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/old/auth_service.dart';
-import '../home_page.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   final String email;

@@ -22,6 +22,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "addRoutine": MessageLookupByLibrary.simpleMessage("Agregar rutina"),
     "age": MessageLookupByLibrary.simpleMessage("Edad"),
     "ageRequired": MessageLookupByLibrary.simpleMessage(
       "La edad es obligatoria.",
@@ -39,6 +40,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "continue_": MessageLookupByLibrary.simpleMessage("Continuar"),
     "createAccount": MessageLookupByLibrary.simpleMessage("Crear una cuenta"),
+    "delete": MessageLookupByLibrary.simpleMessage("Eliminar"),
+    "editProfile": MessageLookupByLibrary.simpleMessage("Editar Perfil"),
+    "editRoutines": MessageLookupByLibrary.simpleMessage("Editar Rutinas"),
     "email": MessageLookupByLibrary.simpleMessage("Correo electrónico"),
     "emailRequired": MessageLookupByLibrary.simpleMessage(
       "El correo electrónico es obligatorio.",
@@ -67,9 +71,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
       "La contraseña debe tener al menos 6 caracteres.",
     ),
+    "passwordsDoNotMatch": MessageLookupByLibrary.simpleMessage(
+      "Las contraseñas no coinciden",
+    ),
+    "profileUpdateError": MessageLookupByLibrary.simpleMessage(
+      "Error al actualizar el perfil: ",
+    ),
+    "profileUpdated": MessageLookupByLibrary.simpleMessage(
+      "Perfil actualizado exitosamente",
+    ),
+    "routine": MessageLookupByLibrary.simpleMessage("Rutina"),
+    "routinesUpdateError": MessageLookupByLibrary.simpleMessage(
+      "Error al actualizar las rutinas: ",
+    ),
+    "routinesUpdated": MessageLookupByLibrary.simpleMessage(
+      "Rutinas actualizadas exitosamente",
+    ),
+    "saveChanges": MessageLookupByLibrary.simpleMessage("Guardar Cambios"),
     "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
     "signIn": MessageLookupByLibrary.simpleMessage("Acceder"),
     "signInTitle": MessageLookupByLibrary.simpleMessage("Acceder"),
     "signUp": MessageLookupByLibrary.simpleMessage("Registrarse"),
+    "userNotAuthenticated": MessageLookupByLibrary.simpleMessage(
+      "Usuario no autenticado",
+    ),
+    "world": MessageLookupByLibrary.simpleMessage("Hola mundo!"),
   };
 }

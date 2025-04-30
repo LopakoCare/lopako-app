@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lopako_app_lis/old/auth_service.dart';
+import 'auth_service.dart';
 import 'login_page.dart';
-import 'old/profile_page.dart';
-import 'old/routines_page.dart';
-import 'old/calendar_page.dart';
+import 'profile_page.dart';
+import 'routines_page.dart';
+import 'calendar_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

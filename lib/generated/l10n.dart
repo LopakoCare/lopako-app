@@ -249,6 +249,116 @@ class S {
   String get or {
     return Intl.message('or', name: 'or', desc: '', args: []);
   }
+
+  /// `Hello world!`
+  String get world {
+    return Intl.message('Hello world!', name: 'world', desc: '', args: []);
+  }
+
+  /// `User not authenticated`
+  String get userNotAuthenticated {
+    return Intl.message(
+      'User not authenticated',
+      name: 'userNotAuthenticated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error updating profile: `
+  String get profileUpdateError {
+    return Intl.message(
+      'Error updating profile: ',
+      name: 'profileUpdateError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error updating routines: `
+  String get routinesUpdateError {
+    return Intl.message(
+      'Error updating routines: ',
+      name: 'routinesUpdateError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Profile`
+  String get editProfile {
+    return Intl.message(
+      'Edit Profile',
+      name: 'editProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Changes`
+  String get saveChanges {
+    return Intl.message(
+      'Save Changes',
+      name: 'saveChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Routines`
+  String get editRoutines {
+    return Intl.message(
+      'Edit Routines',
+      name: 'editRoutines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Passwords do not match`
+  String get passwordsDoNotMatch {
+    return Intl.message(
+      'Passwords do not match',
+      name: 'passwordsDoNotMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile updated successfully`
+  String get profileUpdated {
+    return Intl.message(
+      'Profile updated successfully',
+      name: 'profileUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Routine`
+  String get routine {
+    return Intl.message('Routine', name: 'routine', desc: '', args: []);
+  }
+
+  /// `Delete`
+  String get delete {
+    return Intl.message('Delete', name: 'delete', desc: '', args: []);
+  }
+
+  /// `Add routine`
+  String get addRoutine {
+    return Intl.message('Add routine', name: 'addRoutine', desc: '', args: []);
+  }
+
+  /// `Routines updated successfully`
+  String get routinesUpdated {
+    return Intl.message(
+      'Routines updated successfully',
+      name: 'routinesUpdated',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
