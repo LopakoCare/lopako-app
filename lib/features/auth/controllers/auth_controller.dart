@@ -48,8 +48,6 @@ class AuthController extends ChangeNotifier {
         String firstProvider = providers.first;
         if (firstProvider == 'google.com') {
           await signInWithGoogle();
-        } else {
-          await signInWithApple();
         }
       }
     } catch (e) {
@@ -168,27 +166,6 @@ class AuthController extends ChangeNotifier {
       return true;
     } catch (e) {
       _state = _state.copyWith(isLoading: false);
-      notifyListeners();
-      throw e;
-    }
-  }
-
-  // Sign in with Apple
-  Future<bool> signInWithApple() async {
-    _state = _state.copyWith(
-      isLoading: true,
-    );
-    notifyListeners();
-
-    try {
-      await _authService.signInWithApple();
-      _state = _state.copyWith(isLoading: false);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _state = _state.copyWith(
-        isLoading: false,
-      );
       notifyListeners();
       throw e;
     }

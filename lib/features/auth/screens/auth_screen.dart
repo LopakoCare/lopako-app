@@ -233,7 +233,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                 icon: 'assets/images/apple_logo.png',
                                 onPressed: state.isLoading
                                     ? null
-                                    : () => _signInWithApple(authController),
+                                    : () => _signInWithGoogle(authController),
                               ),
                           ],
                         ),
@@ -354,15 +354,6 @@ class _AuthScreenState extends State<AuthScreen> {
       if (error is! FirebaseAuthException || error.code != 'ERROR_ABORTED_BY_USER') {
         _showAuthErrorDialog(error.toString());
       }
-    });
-  }
-
-  void _signInWithApple(AuthController controller) {
-    controller.signInWithApple().then((success) {
-      // TODO: Handle success case
-    }).catchError((error) {
-      // Show error dialog for Apple sign-in errors
-      _showAuthErrorDialog(error.toString());
     });
   }
 }
