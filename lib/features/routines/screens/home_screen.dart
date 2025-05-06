@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final FamiliarRoutinesController _controller = FamiliarRoutinesController();
+  final FamiliarCircleController _controller = FamiliarCircleController();
   final RoutinesController _routinesController = RoutinesController();
   late Future<List<Map<String, dynamic>>> _rutinasFuturas;
 

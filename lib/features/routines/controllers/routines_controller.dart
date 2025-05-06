@@ -14,7 +14,7 @@ class Actividad {
 }
 
 class RoutinesController {
-  final FamiliarRoutinesController _familiarController = FamiliarRoutinesController();
+  final FamiliarCircleController _familiarController = FamiliarCircleController();
 
   // Obtiene todas las rutinas
   Future<List<Actividad>> obtenerTodasLasRutinas() async{

@@ -39,5 +39,8 @@
   "routine": "Routine",
   "delete": "Delete",
   "addRoutine": "Add routine",
-  "routinesUpdated": "Routines updated successfully"
+  "routinesUpdated": "Routines updated successfully",
+  "familyCircle": "Family Circle",
+  "joinFamilyCicle" : "Join a family circle",
+  "createFamilyCircle":  "Create a family circle"
 }

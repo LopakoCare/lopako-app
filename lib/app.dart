@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/core/constants/app_theme.dart';
+import 'package:lopako_app_lis/features/familiar_circles/screens/create_or_join_screen.dart';
+import 'package:lopako_app_lis/features/familiar_circles/screens/family_circle_details.dart';
+import 'package:lopako_app_lis/features/familiar_circles/screens/family_circle_pin.dart';
+import 'package:lopako_app_lis/features/navigation/screens/main_tab_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
@@ -43,21 +47,35 @@ class MyApp extends StatelessWidget {
         ],
         supportedLocales: S.delegate.supportedLocales,
         locale: const Locale('es'),
-        home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active) {
-              return AppWrapper();
-            }
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          },
-        ),
+        home: const AuthScreen(), // punto de entrada claro
         routes: {
           '/auth': (context) => const AuthScreen(),
+          '/home': (context) => MainTabScreen(),
           '/routines': (context) => const HomeScreen(),
           '/calendar': (context) => const CalendarScreen(),
+          '/family/choice': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map?;
+            final userAge = args?['userAge'] as int;
+
+            return FamilyCircleChoiceScreen(userAge: userAge);
+          },
+          '/family/join': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map?;
+            final userAge = args?['userAge'] as int;
+
+            return JoinFamilyCodeScreen(userAge: userAge);
+          },
+
+          '/family/details': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as Map;
+
+            return FamilyCircleDetailsScreen(
+              isCreating: args['isCreating'] ?? false,
+              patientName: args['patientName'],
+              familyId: args['familyId'],
+              userAge: args['userAge']
+            );
+          },
         },
       ),
     );

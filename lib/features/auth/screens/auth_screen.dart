@@ -324,9 +324,13 @@ class _AuthScreenState extends State<AuthScreen> {
   void _signIn(AuthController controller) async {
     if (_passwordController.text.isNotEmpty) {
       try {
-        await controller.signInWithEmailPassword(_passwordController.text);
+        final success = await controller.signInWithEmailPassword(_passwordController.text);
+
+        //Navegar tras login exitoso
+        if (success && mounted) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
       } catch (error) {
-        // Show error dialog for authentication errors
         _showAuthErrorDialog(error.toString());
       }
     }
@@ -335,17 +339,33 @@ class _AuthScreenState extends State<AuthScreen> {
   void _register(AuthController controller) async {
     if (_validateRegistrationFields()) {
       try {
-        await controller.registerWithEmailPassword(
+        final success = await controller.registerWithEmailPassword(
           _passwordController.text,
           _nameController.text,
           _ageController.text,
         );
+
+        //Navegar tras registro exitoso
+        if (success && mounted) {
+          final rawAge = _ageController.text.trim();
+          print('[DEBUG] Edad introducida: $rawAge');
+
+          final age = int.tryParse(rawAge);
+          print('[DEBUG] Edad parseada: $age');
+          Navigator.pushReplacementNamed(
+            context,
+            '/family/choice',
+            arguments: {
+              'userAge': age, // 👈 pasas la edad como argumento
+            },
+          );
+        }
       } catch (error) {
-        // Show error dialog for registration errors
         _showAuthErrorDialog(error.toString());
       }
     }
   }
+
 
   void _signInWithGoogle(AuthController controller) {
     controller.signInWithGoogle().then((success) {
