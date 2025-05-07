@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
+import 'package:lopako_app_lis/features/settings/screens/family_circle_settings_screen.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 import 'package:provider/provider.dart';
 import '../../auth/controllers/auth_controller.dart';
@@ -40,6 +41,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
             ),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.group_outlined),
+                title: Text('Círculos familiares'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FamilyCircleSettingsScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
             const Spacer(),
             ElevatedButton(
               onPressed: authController.signOut,

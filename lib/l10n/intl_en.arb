@@ -42,5 +42,6 @@
   "routinesUpdated": "Routines updated successfully",
   "familyCircle": "Family Circle",
   "joinFamilyCicle" : "Join a family circle",
-  "createFamilyCircle":  "Create a family circle"
+  "createFamilyCircle":  "Create a family circle",
+  "editFamilyCircle": "Family circles"
 }
