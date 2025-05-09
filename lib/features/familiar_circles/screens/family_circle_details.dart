@@ -23,6 +23,11 @@ class FamilyCircleDetailsScreen extends StatefulWidget {
 class _FamilyCircleDetailsScreenState extends State<FamilyCircleDetailsScreen> {
   final _nameController = TextEditingController();
   String? _selectedRole;
+  Set<String> _selectedConcerns = {};
+  double _careExperience = 0;
+  String? _supportLevel;
+  double _careHours = 0;
+  Set<String> _likedActivities = {};
 
   final _controller = FamiliarCircleController();
 
@@ -115,12 +120,14 @@ class _FamilyCircleDetailsScreenState extends State<FamilyCircleDetailsScreen> {
     final primaryText = widget.isCreating ? 'Crear círculo' : 'Unirse al círculo';
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(widget.isCreating ? 'Crear círculo' : 'Unirse a círculo'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ✅ Mostrar el campo del paciente siempre, solo editable si estás creando
             const Text('Nombre del paciente:'),
@@ -138,17 +145,120 @@ class _FamilyCircleDetailsScreenState extends State<FamilyCircleDetailsScreen> {
             const Text('¿Qué relación tienes con el paciente?'),
             const SizedBox(height: 8),
             RadioListTile<String>(
-              title: const Text('Cuidador'),
+              title: const Text('❤️ Es parte de mi familia'),
+              //('Dar prioridad a tags que no sean de cuidado directo como comunicación y actividades'),
+              value: 'familiar',
+              groupValue: _selectedRole,
+              onChanged: (value) => setState(() => _selectedRole = value),
+            ),
+            RadioListTile<String>(
+              title: const Text('🙋 Soy quien le cuida principalmente'),
+              //('Dar prioridad a formación esencial para cuidadores'),
               value: 'cuidador',
               groupValue: _selectedRole,
               onChanged: (value) => setState(() => _selectedRole = value),
             ),
             RadioListTile<String>(
-              title: const Text('Familiar'),
-              value: 'familiar',
+              title: const Text('🤝 Le acompaño de forma puntual o compartida'),
+              //('Dar prioridad a tags de actividades'),
+              value: 'acompañante',
               groupValue: _selectedRole,
               onChanged: (value) => setState(() => _selectedRole = value),
             ),
+            RadioListTile<String>(
+              title: const Text('❓ Prefiero no decirlo o no estoy seguro/a'),
+              value: 'no_seguro',
+              groupValue: _selectedRole,
+              onChanged: (value) => setState(() => _selectedRole = value),
+            ),
+
+            const Text('¿Qué te preocupa? (respuestas placeholder)'),
+            Wrap(
+              spacing: 8.0,
+              children: [
+                'Que se desoriente',
+                'Que se sienta solo/a',
+                'Que olvide medicación',
+                'Comunicación difícil',
+              ].map((tag) {
+                return ChoiceChip(
+                  label: Text(tag),
+                  selected: _selectedConcerns.contains(tag),
+                  onSelected: (selected) {
+                    setState(() {
+                      selected ? _selectedConcerns.add(tag) : _selectedConcerns.remove(tag);
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+
+            const Text('¿Tienes experiencia previa cuidando?'),
+            Slider(
+              value: _careExperience,
+              min: 0,
+              max: 1,
+              divisions: 1,
+              label: _careExperience == 0 ? 'No, es la primera vez' : 'Sí, algo',
+              onChanged: (value) => setState(() => _careExperience = value),
+            ),
+
+            const Text('¿Cuánto apoyo necesita la persona que cuidas?'),
+            RadioListTile<String>(
+              title: const Text('🟢 Bastante autónomo/a'),
+              subtitle: const Text('Hace muchas cosas solo/a, aunque olvida detalles.'),
+              value: 'autonomo',
+              groupValue: _supportLevel,
+              onChanged: (value) => setState(() => _supportLevel = value),
+            ),
+            RadioListTile<String>(
+              title: const Text('🟡 Ayuda en algunas tareas'),
+              subtitle: const Text('A veces se desorienta o necesita guía.'),
+              value: 'parcial',
+              groupValue: _supportLevel,
+              onChanged: (value) => setState(() => _supportLevel = value),
+            ),
+            RadioListTile<String>(
+              title: const Text('🔴 Depende mucho de mí'),
+              subtitle: const Text('Olvida rutinas básicas y se frustra si está solo/a.'),
+              value: 'dependiente',
+              groupValue: _supportLevel,
+              onChanged: (value) => setState(() => _supportLevel = value),
+            ),
+
+            const Text('¿Cuánto tiempo dedicas a cuidar? (h/día)'),
+            Slider(
+              value: _careHours,
+              min: 0,
+              max: 24,
+              divisions: 24,
+              label: '${_careHours.round()}h',
+              onChanged: (value) => setState(() => _careHours = value),
+            ),
+
+            const Text('¿Qué le gusta hacer a tu familiar?'),
+            Wrap(
+              spacing: 8.0,
+              children: [
+                'Pasear',
+                'Escuchar música',
+                'Leer',
+                'Juegos de memoria',
+                'Cocinar',
+              ].map((activity) {
+                return FilterChip(
+                  label: Text(activity),
+                  selected: _likedActivities.contains(activity),
+                  onSelected: (selected) {
+                    setState(() {
+                      selected ? _likedActivities.add(activity) : _likedActivities.remove(activity);
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+
+
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _onSubmit,
@@ -158,7 +268,8 @@ class _FamilyCircleDetailsScreenState extends State<FamilyCircleDetailsScreen> {
                 minimumSize: const Size(double.infinity, 50),
               ),
               child: Text(primaryText),
-            )
+            ),
+            const SizedBox(height: 100),
           ],
         ),
       ),
