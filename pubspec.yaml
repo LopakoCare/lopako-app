@@ -82,6 +82,7 @@ flutter:
   # Add assets here
   assets:
     - assets/images/
+    - assets/bubbles/
 
 flutter_intl:
   enabled: true
