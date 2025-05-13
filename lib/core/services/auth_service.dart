@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -103,43 +102,6 @@ class AuthService {
       }
     } catch (e) {
       print('Error signing in with Google: $e');
-      rethrow;
-    }
-  }
-
-  // Sign in with Apple
-  Future<UserCredential> signInWithApple() async {
-    try {
-      // Request credentials
-      final AuthorizationCredentialAppleID appleCredential =
-      await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-
-      // Create OAuthCredential
-      final OAuthCredential credential = OAuthProvider('apple.com').credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
-
-      // Sign in with credential
-      final userCredential = await _auth.signInWithCredential(credential);
-
-      // Update user profile if name is available and user is new
-      if (appleCredential.givenName != null &&
-          appleCredential.familyName != null &&
-          userCredential.additionalUserInfo?.isNewUser == true) {
-        await userCredential.user?.updateDisplayName(
-            '${appleCredential.givenName} ${appleCredential.familyName}'
-        );
-      }
-
-      return userCredential;
-    } catch (e) {
-      print('Error signing in with Apple: $e');
       rethrow;
     }
   }

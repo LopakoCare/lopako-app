@@ -28,6 +28,23 @@
   "logout": "Log out",
   "or": "or",
   "world": "Hello world!",
+  "userNotAuthenticated": "User not authenticated",
+  "profileUpdateError": "Error updating profile: ",
+  "routinesUpdateError": "Error updating routines: ",
+  "editProfile": "Edit Profile",
+  "saveChanges": "Save Changes",
+  "editRoutines": "Edit Routines",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "profileUpdated": "Profile updated successfully",
+  "routine": "Routine",
+  "delete": "Delete",
+  "addRoutine": "Add routine",
+  "routinesUpdated": "Routines updated successfully",
+  "familyCircle": "Family Circle",
+  "joinFamilyCicle" : "Join a family circle",
+  "createFamilyCircle":  "Create a family circle",
+  "editFamilyCircle": "Family circles"
+  "world": "Hello world!",
   "chatbot": "Chat Assistant",
   "@chatbot": {
     "description": "Label for the chatbot navigation item"

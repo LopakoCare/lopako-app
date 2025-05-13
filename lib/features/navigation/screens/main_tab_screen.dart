@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lopako_app_lis/core/constants/app_colors.dart';
+import 'package:lopako_app_lis/generated/l10n.dart';
 import '../../routines/screens/home_screen.dart';
 import '../../calendar/screens/calendar_screen.dart';
-import '../../settings/screens/settings_screen.dart';
 import '../../chatbot/screens/chatbot_screen.dart';  // Add this import
+import '../../settings/screens/settings_screen.dart';
+
 
 class MainTabScreen extends StatefulWidget {
   @override
@@ -20,12 +24,29 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
     _loadLastTab();
 
     _tabController = TabController(
-      length: 4,  // Updated to include chatbot
+      length: 3,
       vsync: this,
       initialIndex: _currentIndex,
     );
 
     _tabController.addListener(_handleTabSelection);
+  }
+
+  Future<void> _loadLastTab() async {
+    // TODO: Implementar lógica para cargar la última pestaña
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {
+        _currentIndex = _tabController.index;
+      });
+      _saveSelectedTab(_currentIndex);
+    }
+  }
+
+  Future<void> _saveSelectedTab(int index) async {
+    // TODO: Implementar lógica para guardar la pestaña seleccionada
   }
 
   @override
@@ -42,31 +63,41 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
           SettingsScreen(key: PageStorageKey('settings')),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,  // Added to support 4 items
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: AppColors.neutral[100]!,
+              width: 2.0,
+            ),
+          ),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,  // Added to support 4 items
         onTap: (index) {
           _tabController.animateTo(index);
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: localizations.home,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: FaIcon(FontAwesomeIcons.house),
+              label: localizations.home,
+            ),
+            BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.calendarDay),
             label: localizations.calendar,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
             label: localizations.chatbot,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: localizations.settings,
-          ),
-        ],
-      ),
+            ),
+            BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.gear),
+              label: localizations.settings,
+            ),
+          ],
+        ),
+      )
     );
   }
 

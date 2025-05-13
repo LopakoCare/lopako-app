@@ -28,6 +28,23 @@
   "logout": "Cerrar sesión",
   "or": "o",
   "world": "Hola mundo!",
+  "userNotAuthenticated": "Usuario no autenticado",
+  "profileUpdateError": "Error al actualizar el perfil: ",
+  "routinesUpdateError": "Error al actualizar las rutinas: ",
+  "editProfile": "Editar Perfil",
+  "saveChanges": "Guardar Cambios",
+  "editRoutines": "Editar Rutinas",
+  "passwordsDoNotMatch": "Las contraseñas no coinciden",
+  "profileUpdated": "Perfil actualizado exitosamente",
+  "routine": "Rutina",
+  "delete": "Eliminar",
+  "addRoutine": "Agregar rutina",
+  "routinesUpdated": "Rutinas actualizadas exitosamente",
+  "familyCircle": "Círculo Familiar",
+  "joinFamilyCicle" : "Unirse a un círculo familiar",
+  "createFamilyCircle":  "Crear círculo familiar",
+  "editFamilyCircle": "Círculos familiares"
+  "world": "Hola mundo!",
   "chatbot": "Asistente Virtual",
   "@chatbot": {
     "description": "Etiqueta para el elemento de navegación del chatbot"

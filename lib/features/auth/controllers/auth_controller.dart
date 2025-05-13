@@ -11,6 +11,11 @@ class AuthController extends ChangeNotifier {
 
   AuthStateModel get state => _state;
 
+  bool _wasJustRegistered = false;
+
+  bool get wasJustRegistered => _wasJustRegistered;
+
+
   // Update email and check if it exists in Firebase
   Future<void> checkEmail(String email) async {
     if (email.isEmpty || !_isValidEmail(email)) {
@@ -49,8 +54,6 @@ class AuthController extends ChangeNotifier {
         String firstProvider = providers.first;
         if (firstProvider == 'google.com') {
           await signInWithGoogle();
-        } else {
-          await signInWithApple();
         }
       }
     } catch (e) {
@@ -143,6 +146,8 @@ class AuthController extends ChangeNotifier {
         age,
       );
       _state = _state.copyWith(isLoading: false);
+      _wasJustRegistered = true; //Marcamos que es registro
+      print('[DEBUG] Usuario registrado - wasJustRegistered = $_wasJustRegistered');
       notifyListeners();
       return true;
     } catch (e) {
@@ -153,6 +158,7 @@ class AuthController extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+
   }
 
   // Sign in with Google
@@ -169,27 +175,6 @@ class AuthController extends ChangeNotifier {
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
       rethrow;
-    }
-  }
-
-  // Sign in with Apple
-  Future<bool> signInWithApple() async {
-    _state = _state.copyWith(
-      isLoading: true,
-    );
-    notifyListeners();
-
-    try {
-      await _authService.signInWithApple();
-      _state = _state.copyWith(isLoading: false);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _state = _state.copyWith(
-        isLoading: false,
-      );
-      notifyListeners();
-      throw e;
     }
   }
 
@@ -238,6 +223,7 @@ class AuthController extends ChangeNotifier {
   void signOut() async {
     await _authService.signOut();
     _state = AuthStateModel(); // Reset state after sign out
+    _wasJustRegistered = false; // reset
     notifyListeners();
   }
 }

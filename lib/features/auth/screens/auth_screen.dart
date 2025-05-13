@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/intl_localizations.dart';
 import 'package:provider/provider.dart';
+import '../../../../generated/l10n.dart';
 import '../controllers/auth_controller.dart';
 import '../models/auth_state_model.dart';
 import '../widgets/auth_button.dart';
@@ -33,7 +33,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = S.of(context);
     final authController = Provider.of<AuthController>(context);
     final state = authController.state;
 
@@ -70,7 +70,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: localizations.email,
-                    border: const OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   enabled: state.currentStep == AuthStep.emailInput && !state.isLoading,
@@ -100,7 +99,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _passwordController,
                         decoration: InputDecoration(
                           labelText: localizations.password,
-                          border: const OutlineInputBorder(),
                         ),
                         obscureText: true,
                         enabled: !state.isLoading,
@@ -130,7 +128,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _nameController,
                         decoration: InputDecoration(
                           labelText: localizations.name,
-                          border: const OutlineInputBorder(),
                         ),
                         enabled: !state.isLoading,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -146,7 +143,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _ageController,
                         decoration: InputDecoration(
                           labelText: localizations.age,
-                          border: const OutlineInputBorder(),
                         ),
                         keyboardType: TextInputType.number,
                         enabled: !state.isLoading,
@@ -206,35 +202,42 @@ class _AuthScreenState extends State<AuthScreen> {
                 if (state.currentStep == AuthStep.emailInput)
                   Column(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                      Padding(
+                        padding: EdgeInsets.all(24.0),
                         child: Row(
                           children: [
                             Expanded(child: Divider()),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text('OR'),
+                              child: Text(localizations.or),
                             ),
                             Expanded(child: Divider()),
                           ],
                         ),
                       ),
-                      SocialSignInButton(
-                        text: localizations.continueWithGoogle,
-                        icon: 'assets/images/google_logo.png',
-                        onPressed: state.isLoading
-                            ? null
-                            : () => _signInWithGoogle(authController),
-                      ),
-                      const SizedBox(height: 12),
-                      if (Theme.of(context).platform == TargetPlatform.iOS)
-                        SocialSignInButton(
-                          text: localizations.continueWithApple,
-                          icon: 'assets/images/apple_logo.png',
-                          onPressed: state.isLoading
-                              ? null
-                              : () => _signInWithApple(authController),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          children: [
+                            SocialSignInButton(
+                              text: localizations.continueWithGoogle,
+                              icon: 'assets/images/google_logo.png',
+                              onPressed: state.isLoading
+                                  ? null
+                                  : () => _signInWithGoogle(authController),
+                            ),
+                            const SizedBox(height: 12),
+                            if (Theme.of(context).platform == TargetPlatform.iOS)
+                              SocialSignInButton(
+                                text: localizations.continueWithApple,
+                                icon: 'assets/images/apple_logo.png',
+                                onPressed: state.isLoading
+                                    ? null
+                                    : () => _signInWithGoogle(authController),
+                              ),
+                          ],
                         ),
+                      )
                     ],
                   ),
               ],
@@ -273,7 +276,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   // Helper method to show error dialogs for external auth providers
   void _showAuthErrorDialog(String errorMessage) {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = S.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -290,7 +293,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   // Helper methods
-  String _getTitleText(AuthStep step, AppLocalizations localizations) {
+  String _getTitleText(AuthStep step, S localizations) {
     switch (step) {
       case AuthStep.emailInput:
         return localizations.signInTitle;
@@ -301,7 +304,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  String _getButtonText(AuthStep step, AppLocalizations localizations) {
+  String _getButtonText(AuthStep step, S localizations) {
     switch (step) {
       case AuthStep.emailInput:
         return localizations.continue_;
@@ -321,9 +324,13 @@ class _AuthScreenState extends State<AuthScreen> {
   void _signIn(AuthController controller) async {
     if (_passwordController.text.isNotEmpty) {
       try {
-        await controller.signInWithEmailPassword(_passwordController.text);
+        final success = await controller.signInWithEmailPassword(_passwordController.text);
+
+        //Navegar tras login exitoso
+        if (success && mounted) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
       } catch (error) {
-        // Show error dialog for authentication errors
         _showAuthErrorDialog(error.toString());
       }
     }
@@ -332,17 +339,33 @@ class _AuthScreenState extends State<AuthScreen> {
   void _register(AuthController controller) async {
     if (_validateRegistrationFields()) {
       try {
-        await controller.registerWithEmailPassword(
+        final success = await controller.registerWithEmailPassword(
           _passwordController.text,
           _nameController.text,
           _ageController.text,
         );
+
+        //Navegar tras registro exitoso
+        if (success && mounted) {
+          final rawAge = _ageController.text.trim();
+          print('[DEBUG] Edad introducida: $rawAge');
+
+          final age = int.tryParse(rawAge);
+          print('[DEBUG] Edad parseada: $age');
+          Navigator.pushReplacementNamed(
+            context,
+            '/family/choice',
+            arguments: {
+              'userAge': age, // 👈 pasas la edad como argumento
+            },
+          );
+        }
       } catch (error) {
-        // Show error dialog for registration errors
         _showAuthErrorDialog(error.toString());
       }
     }
   }
+
 
   void _signInWithGoogle(AuthController controller) {
     controller.signInWithGoogle().then((result) {
@@ -352,15 +375,6 @@ class _AuthScreenState extends State<AuthScreen> {
       if (error is! FirebaseAuthException || error.code != 'ERROR_ABORTED_BY_USER') {
         _showAuthErrorDialog(error.toString());
       }
-    });
-  }
-
-  void _signInWithApple(AuthController controller) {
-    controller.signInWithApple().then((success) {
-      // TODO: Handle success case
-    }).catchError((error) {
-      // Show error dialog for Apple sign-in errors
-      _showAuthErrorDialog(error.toString());
     });
   }
 }
