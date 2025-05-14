@@ -1,16 +1,85 @@
+// core/services/auth_service.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'dart:io' show Platform;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AuthService {
+import 'service_manager.dart';
+import 'user_service.dart';
+
+class AuthService extends BaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _google = GoogleSignIn();
 
-  // Get current user
   User? get currentUser => _auth.currentUser;
 
-  /// Check if email exists in Firebase Auth from an [email] field
-  Future<List<String>> checkEmailExists(String email) async {
+  /* ──────────── SIGN UP ──────────── */
+  Future<UserCredential> signup({
+    required String email,
+    required String password,
+    required String name,
+    required int age,
+  }) async {
+    final cred = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    await cred.user!.updateDisplayName(name);
+    await cred.user!.sendEmailVerification();
+
+    // Crea el documento en “users”
+    final userSvc = serviceManager.getService<UserService>('user');
+    await userSvc.create(
+      uid: cred.user!.uid,
+      email: email,
+      name: name,
+      age: age,
+    );
+
+    return cred;
+  }
+
+  /* ──────────── LOGIN ──────────── */
+  Future<User?> login(String email, String password) async {
+    final cred =
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+    // Recuperamos y cacheamos los datos del usuario si quieres
+    final userSvc = serviceManager.getService<UserService>('user');
+    await userSvc.get(uid: cred.user!.uid);
+
+    return cred.user;
+  }
+
+  /* ────── GOOGLE SSO (alta o login) ────── */
+  Future<User?> signinWithGoogle() async {
+    final gUser = await _google.signIn();
+    if (gUser == null) return null;
+    final gAuth = await gUser.authentication;
+    final cred = await _auth.signInWithCredential(
+      GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken,
+        idToken: gAuth.idToken,
+      ),
+    );
+    final isNew = cred.additionalUserInfo?.isNewUser ?? false;
+    if (isNew) {
+      final displayName = gUser.displayName ?? gUser.email.split('@').first;
+      int? age;
+      await serviceManager.getService<UserService>('user')
+          .create(uid: cred.user!.uid, email: gUser.email, name: displayName, age: age);
+    }
+    return cred.user;
+  }
+
+  /* ──────────── LOGOUT ──────────── */
+  Future<void> logout() async {
+    await _google.signOut();
+    await _auth.signOut();
+  }
+
+  /* ──────────── PROVEEDOR ──────────── */
+  Future<List<String>> getProviders(String email) async {
     List<String> providers = [];
     try {
       providers = await _auth.fetchSignInMethodsForEmail(email);
@@ -20,87 +89,8 @@ class AuthService {
     return providers;
   }
 
-  // Sign in with email and password
-  Future<UserCredential> signInWithEmailPassword(String email, String password) async {
-    try {
-      return await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      print('Error signing in with email and password: $e');
-      rethrow;
-    }
-  }
-
-  // Register with email and password
-  Future<UserCredential> registerWithEmailPassword(
-      String email,
-      String password,
-      String name,
-      int age
-      ) async {
-    try {
-      // Create user
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // Update user profile with name
-      await userCredential.user?.updateDisplayName(name);
-
-      // Store additional user data in Firestore
-      // This would typically be done in a separate user service
-      // await _firestoreService.createUserProfile(
-      //   userCredential.user!.uid,
-      //   {
-      //     'name': name,
-      //     'email': email,
-      //     'age': age,
-      //     'createdAt': DateTime.now(),
-      //   },
-      // );
-
-      // Send email verification
-      await userCredential.user?.sendEmailVerification();
-
-      return userCredential;
-    } catch (e) {
-      print('Error registering with email and password: $e');
-      rethrow;
-    }
-  }
-
-  // Sign in with Google
-  Future<UserCredential> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      if (googleUser == null) {
-        throw FirebaseAuthException(
-          code: 'ERROR_ABORTED_BY_USER',
-          message: 'Sign in aborted by user',
-        );
-      }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      return await _auth.signInWithCredential(credential);
-    } catch (e) {
-      print('Error signing in with Google: $e');
-      rethrow;
-    }
-  }
-
-  // Sign out
-  Future<void> signOut() async {
-    await _googleSignIn.signOut();
-    await _auth.signOut();
+  /* ──────────── VERIFICAR CUENTA LOGGEADA ──────────── */
+  bool isLogged() {
+    return _auth.currentUser != null;
   }
 }

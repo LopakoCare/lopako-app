@@ -11,7 +11,7 @@ class AuthController extends ChangeNotifier {
   AuthStateModel get state => _state;
 
   // Update email and check if it exists in Firebase
-  Future<void> checkEmail(String email) async {
+  Future<void> login(String email) async {
     if (email.isEmpty || !_isValidEmail(email)) {
       _state = _state.copyWith(
         errorMessage: 'Please enter a valid email address',
@@ -28,7 +28,7 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final providers = await _authService.checkEmailExists(email);
+      final providers = await _authService.getProviders(email);
 
       if (providers.isEmpty) {
         // Email doesn't exist, proceed to registration
@@ -61,7 +61,7 @@ class AuthController extends ChangeNotifier {
   }
 
   // Sign in with email and password
-  Future<bool> signInWithEmailPassword(String password) async {
+  Future<bool> loginWithPassword(String password) async {
     if (password.isEmpty) {
       _state = _state.copyWith(
         errorMessage: 'Please enter your password',
@@ -78,7 +78,7 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.signInWithEmailPassword(_state.email, password);
+      await _authService.login(_state.email, password);
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
       return true;
@@ -133,11 +133,11 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.registerWithEmailPassword(
-        _state.email,
-        password,
-        name,
-        age,
+      await _authService.signup(
+        email: _state.email,
+        password: password,
+        name: name,
+        age: age,
       );
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
@@ -160,7 +160,7 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.signInWithGoogle();
+      await _authService.signinWithGoogle();
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
       return true;
@@ -188,33 +188,9 @@ class AuthController extends ChangeNotifier {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
-  String _formatProviders(List<String> providers) {
-    final formattedProviders = providers.map((provider) {
-      switch (provider) {
-        case 'google.com':
-          return 'Google';
-        case 'apple.com':
-          return 'Apple';
-        case 'password':
-          return 'Email/Password';
-        default:
-          return provider;
-      }
-    }).toList();
-
-    if (formattedProviders.length == 1) {
-      return formattedProviders.first;
-    } else if (formattedProviders.length == 2) {
-      return '${formattedProviders.first} or ${formattedProviders.last}';
-    } else {
-      final last = formattedProviders.removeLast();
-      return '${formattedProviders.join(', ')}, or $last';
-    }
-  }
-
-  // Sign out
-  void signOut() async {
-    await _authService.signOut();
+  // Logout
+  Future<void> logout() async {
+    await _authService.logout();
     _state = AuthStateModel(); // Reset state after sign out
     notifyListeners();
   }

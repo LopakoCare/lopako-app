@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/core/constants/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'core/services/service_manager.dart';
 import 'generated/l10n.dart';
 
 import 'core/services/auth_service.dart';
@@ -21,11 +21,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(),
-        ),
         ChangeNotifierProvider<AuthController>(
-          create: (ctx) => AuthController(ctx.read<AuthService>()),
+          create: (ctx) => AuthController(
+            ServiceManager.instance.getService<AuthService>('auth'),
+          ),
         ),
         ChangeNotifierProvider<CalendarController>(
           create: (_) => CalendarController(),

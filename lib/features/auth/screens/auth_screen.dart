@@ -317,14 +317,14 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _checkEmail(AuthController controller) async {
     if (_emailController.text.isNotEmpty) {
-      await controller.checkEmail(_emailController.text);
+      await controller.login(_emailController.text);
     }
   }
 
   void _signIn(AuthController controller) async {
     if (_passwordController.text.isNotEmpty) {
       try {
-        await controller.signInWithEmailPassword(_passwordController.text);
+        await controller.loginWithPassword(_passwordController.text);
       } catch (error) {
         // Show error dialog for authentication errors
         _showAuthErrorDialog(error.toString());
