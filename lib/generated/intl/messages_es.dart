@@ -40,13 +40,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "continue_": MessageLookupByLibrary.simpleMessage("Continuar"),
     "createAccount": MessageLookupByLibrary.simpleMessage("Crear una cuenta"),
-    "createCircle": MessageLookupByLibrary.simpleMessage("Crea un círculo"),
-    "createCircleDescription": MessageLookupByLibrary.simpleMessage(
-      "Crea un círculo familiar e invita a otros cuidadores para el bienestar del paciente.",
-    ),
-    "createFamilyCircle": MessageLookupByLibrary.simpleMessage(
-      "Crear círculo familiar",
-    ),
     "delete": MessageLookupByLibrary.simpleMessage("Eliminar"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Editar Perfil"),
     "editRoutines": MessageLookupByLibrary.simpleMessage("Editar Rutinas"),
@@ -57,23 +50,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterPassword": MessageLookupByLibrary.simpleMessage(
       "Introduce tu contraseña",
     ),
-    "familyOf": MessageLookupByLibrary.simpleMessage("Familia de"),
-    "firstFamilyCircleSubtitle": MessageLookupByLibrary.simpleMessage(
-      "¡Ya casi estamos! Solo un paso más...",
-    ),
-    "firstFamilyCircleTitle": MessageLookupByLibrary.simpleMessage(
-      "Tu primer círculo familiar",
-    ),
     "home": MessageLookupByLibrary.simpleMessage("Inicio"),
     "invalidAge": MessageLookupByLibrary.simpleMessage(
       "La edad debe ser un número válido.",
     ),
     "invalidEmailFormat": MessageLookupByLibrary.simpleMessage(
       "La dirección de correo electrónico no es válida.",
-    ),
-    "joinCircle": MessageLookupByLibrary.simpleMessage("Únete a otros"),
-    "joinCircleDescription": MessageLookupByLibrary.simpleMessage(
-      "Únete a un círculo familiar creado anteriormente por otro cuidador.",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
     "name": MessageLookupByLibrary.simpleMessage("Nombre"),
@@ -92,7 +74,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwordsDoNotMatch": MessageLookupByLibrary.simpleMessage(
       "Las contraseñas no coinciden",
     ),
-    "patientName": MessageLookupByLibrary.simpleMessage("Nombre del paciente"),
     "profileUpdateError": MessageLookupByLibrary.simpleMessage(
       "Error al actualizar el perfil: ",
     ),
@@ -111,7 +92,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "signIn": MessageLookupByLibrary.simpleMessage("Acceder"),
     "signInTitle": MessageLookupByLibrary.simpleMessage("Acceder"),
     "signUp": MessageLookupByLibrary.simpleMessage("Registrarse"),
-    "skip": MessageLookupByLibrary.simpleMessage("Omitir por ahora"),
     "userNotAuthenticated": MessageLookupByLibrary.simpleMessage(
       "Usuario no autenticado",
     ),

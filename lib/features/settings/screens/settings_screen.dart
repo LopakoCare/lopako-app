@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
-import 'package:lopako_app_lis/features/auth/screens/auth_screen.dart';
+import 'package:lopako_app_lis/features/settings/screens/family_circle_settings_screen.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 import 'package:provider/provider.dart';
 import '../../auth/controllers/auth_controller.dart';
@@ -59,11 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const Spacer(),
             ElevatedButton(
-              onPressed: () async {
-                await authController.logout();
-                if (!mounted) return;
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              },
+              onPressed: authController.signOut,
               child: Text(localizations.logout),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.danger

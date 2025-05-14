@@ -53,9 +53,6 @@ dependencies:
   # Intl es necesario para las traducciones
   intl: any
 
-  # Google Fonts
-  google_fonts: ^6.2.1
-
   # Font Awesome
   font_awesome_flutter: ^10.8.0
 
@@ -84,8 +81,6 @@ flutter:
 
   # Add assets here
   assets:
-    - assets/google_fonts/
-    - assets/icons/
     - assets/images/
 
 flutter_intl:

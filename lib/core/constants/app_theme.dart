@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTheme {
@@ -7,7 +6,7 @@ class AppTheme {
     return ThemeData(
       primarySwatch: AppColors.primary,
       scaffoldBackgroundColor: AppColors.white,
-      fontFamily: GoogleFonts.inter().fontFamily,
+      fontFamily: 'Inter',
       textTheme: TextTheme(
         headlineLarge: TextStyle(
           fontSize: 28.0,
@@ -43,31 +42,6 @@ class AppTheme {
           elevation: 0,
           shadowColor: AppColors.transparent,
         ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          backgroundColor: AppColors.white,
-          foregroundColor: AppColors.neutral[800],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          minimumSize: Size(double.infinity, 48),
-          textStyle: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500,
-          ),
-          side: BorderSide(color: AppColors.neutral[300]!, width: 2.0),
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: AppColors.neutral[700],
-          textStyle: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500,
-          ),
-        )
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -122,26 +96,6 @@ class AppTheme {
           fontSize: 12.0,
           fontWeight: FontWeight.w400,
         ),
-      ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.white,
-        foregroundColor: AppColors.black,
-        elevation: 0,
-        centerTitle: true,
-        titleTextStyle: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.w600,
-          color: AppColors.black,
-        ),
-        iconTheme: IconThemeData(
-          color: AppColors.black,
-        ),
-        shape: Border(
-          bottom: BorderSide(
-            color: AppColors.neutral[200]!,
-            width: 2.0,
-          ),
-        )
       ),
     );
   }

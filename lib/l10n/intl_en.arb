@@ -40,14 +40,8 @@
   "delete": "Delete",
   "addRoutine": "Add routine",
   "routinesUpdated": "Routines updated successfully",
-  "firstFamilyCircleTitle": "Your first family circle",
-  "firstFamilyCircleSubtitle": "We are almost there! Just one more step...",
-  "createCircle": "Create a circle",
-  "createCircleDescription": "Create a family circle and invite other caregivers for the patient's well-being.",
-  "joinCircle": "Join to others",
-  "joinCircleDescription": "Join a family circle previously created by another caregiver.",
-  "skip": "Skip for now",
-  "createFamilyCircle": "Create family circle",
-  "familyOf": "Family of",
-  "patientName": "Patient name"
+  "familyCircle": "Family Circle",
+  "joinFamilyCicle" : "Join a family circle",
+  "createFamilyCircle":  "Create a family circle",
+  "editFamilyCircle": "Family circles"
 }

@@ -317,16 +317,20 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _checkEmail(AuthController controller) async {
     if (_emailController.text.isNotEmpty) {
-      await controller.login(_emailController.text);
+      await controller.checkEmail(_emailController.text);
     }
   }
 
   void _signIn(AuthController controller) async {
     if (_passwordController.text.isNotEmpty) {
       try {
-        await controller.loginWithPassword(_passwordController.text);
+        final success = await controller.signInWithEmailPassword(_passwordController.text);
+
+        //Navegar tras login exitoso
+        if (success && mounted) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
       } catch (error) {
-        // Show error dialog for authentication errors
         _showAuthErrorDialog(error.toString());
       }
     }

@@ -40,14 +40,8 @@
   "delete": "Eliminar",
   "addRoutine": "Agregar rutina",
   "routinesUpdated": "Rutinas actualizadas exitosamente",
-  "firstFamilyCircleTitle": "Tu primer círculo familiar",
-  "firstFamilyCircleSubtitle": "¡Ya casi estamos! Solo un paso más...",
-  "createCircle": "Crea un círculo",
-  "createCircleDescription": "Crea un círculo familiar e invita a otros cuidadores para el bienestar del paciente.",
-  "joinCircle": "Únete a otros",
-  "joinCircleDescription": "Únete a un círculo familiar creado anteriormente por otro cuidador.",
-  "skip": "Omitir por ahora",
-  "createFamilyCircle": "Crear círculo familiar",
-  "familyOf": "Familia de",
-  "patientName": "Nombre del paciente"
+  "familyCircle": "Círculo Familiar",
+  "joinFamilyCicle" : "Unirse a un círculo familiar",
+  "createFamilyCircle":  "Crear círculo familiar",
+  "editFamilyCircle": "Círculos familiares"
 }
