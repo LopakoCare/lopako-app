@@ -6,8 +6,8 @@ import 'package:lopako_app_lis/features/familiar_circles/screens/family_circle_p
 import 'package:lopako_app_lis/features/navigation/screens/main_tab_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'core/services/service_manager.dart';
 import 'generated/l10n.dart';
 
 import 'core/services/auth_service.dart';
@@ -25,11 +25,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(),
-        ),
         ChangeNotifierProvider<AuthController>(
-          create: (ctx) => AuthController(ctx.read<AuthService>()),
+          create: (ctx) => AuthController(
+            ServiceManager.instance.getService<AuthService>('auth'),
+          ),
         ),
         ChangeNotifierProvider<CalendarController>(
           create: (_) => CalendarController(),

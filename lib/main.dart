@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'core/services/auth_service.dart';
+import 'core/services/family_circles_service.dart';
+import 'core/services/service_manager.dart';
 import 'core/models/firebase_options.dart';
 import 'app.dart';
+import 'core/services/user_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  final sm = ServiceManager.instance;
+  sm.add('auth', AuthService());
+  sm.add('user', UserService());
+  sm.add('familyCircles', FamilyCirclesService());
 
   runApp(const MyApp());
 }
