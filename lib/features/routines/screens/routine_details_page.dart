@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lopako_app_lis/features/routines/controllers/routines_controller.dart';
-
+import 'package:lopako_app_lis/features/routines/models/actividad.dart';
 
 class RoutineDetailsPage extends StatefulWidget {
   final DocumentReference rutinaRef;
@@ -20,17 +20,18 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage> {
   @override
   void initState() {
     super.initState();
-    final referenciasActividades = widget.rutinaData['activities'] as List<dynamic>? ?? [];
-    _actividadesFuture = _controller.obtenerActividades(referenciasActividades);
+    final activities = widget.rutinaData['activities'] as List<dynamic>? ?? [];
+    _actividadesFuture = _controller.obtenerActividades(activities);
   }
 
   @override
   Widget build(BuildContext context) {
-    final categorias = widget.rutinaData['categories'] as Map<String, dynamic>?;
+    final category = widget.rutinaData['category'] as Map<String, dynamic>?;
+    final secondaryCategories = widget.rutinaData['secondary_categories'] as List<dynamic>?;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalles rutina'),
+        title: const Text('Detalles rutina'),
       ),
       body: FutureBuilder<List<Actividad>>(
         future: _actividadesFuture,
@@ -47,35 +48,81 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage> {
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                Text(widget.rutinaData['description'] ?? 'Sin descripción'),
+                Text(widget.rutinaData['information'] ?? 'Sin información'),
                 const SizedBox(height: 8),
                 Text('Duración: ${widget.rutinaData['duration'] ?? 'N/A'}'),
-                Text('Frecuencia: ${widget.rutinaData['frequency'] ?? 'N/A'}'),
+                Text('Frecuencia: ${widget.rutinaData['schedule'] ?? 'N/A'}'),
+                if (widget.rutinaData['icon'] != null)
+                  Text('Icono: ${widget.rutinaData['icon']}'),
                 const SizedBox(height: 8),
-                if (categorias != null && categorias.isNotEmpty)
-                  Wrap(
-                    spacing: 8,
-                    children: categorias.entries.map((entry) {
-                      return Chip(
-                        label: Text('${entry.key}: ${entry.value}'),
-                      );
-                    }).toList(),
+
+                if (category != null && category.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: category.entries.map((entry) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.purple.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${entry.key}: ${entry.value}',
+                            style: const TextStyle(
+                              color: Colors.purple,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                const SizedBox(height: 8),
+
+                if (secondaryCategories != null && secondaryCategories.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: secondaryCategories.map((cat) {
+                        final entry = (cat as Map<String, dynamic>).entries.first;
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.purple.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.purple.withOpacity(0.3)),
+                          ),
+                          child: Text(
+                            '${entry.key}: ${entry.value}',
+                            style: TextStyle(
+                              color: Colors.purple.withOpacity(0.8),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
                 if (actividades.isNotEmpty) ...[
                   const Text(
                     'Actividades:',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  ...actividades.map((actividad) => Text('- ${actividad.title}')),
+                  ...actividades.map((actividad) => Text('- ${actividad.title}')).toList(),
                 ],
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () async {
                     final mensaje = await _controller.anadirRutinaAFamilia(widget.rutinaRef);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensaje)));
-                    // Opcional: podrías setState si quieres cambiar la UI tras añadir
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensaje)));
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,

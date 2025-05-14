@@ -359,6 +359,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Family Circle`
+  String get familyCircle {
+    return Intl.message(
+      'Family Circle',
+      name: 'familyCircle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Join a family circle`
+  String get joinFamilyCicle {
+    return Intl.message(
+      'Join a family circle',
+      name: 'joinFamilyCicle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create a family circle`
+  String get createFamilyCircle {
+    return Intl.message(
+      'Create a family circle',
+      name: 'createFamilyCircle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Family circles`
+  String get editFamilyCircle {
+    return Intl.message(
+      'Family circles',
+      name: 'editFamilyCircle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

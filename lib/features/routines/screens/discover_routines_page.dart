@@ -128,7 +128,7 @@ class _RoutinesPageState extends State<RoutinesPage> {
 
         final filteredRutinas = rutinasDocs.where((doc) {
           final data = doc.data() as Map<String, dynamic>;
-          final categorias = data['categories'] as Map<String, dynamic>?;
+          final category = data['category'] as Map<String, dynamic>?;
           final title = (data['title'] ?? '').toString().toLowerCase();
           final query = _searchController.text.toLowerCase();
 
@@ -139,9 +139,9 @@ class _RoutinesPageState extends State<RoutinesPage> {
           if (_categoriasSeleccionadas.isEmpty) {
             return true;
           }
-          if (categorias == null) return false;
+          if (category == null) return false;
 
-          return _categoriasSeleccionadas.every((cat) => categorias.keys.contains(cat));
+          return _categoriasSeleccionadas.every((cat) => category.keys.contains(cat));
         }).toList();
 
         if (filteredRutinas.isEmpty) {
@@ -155,23 +155,44 @@ class _RoutinesPageState extends State<RoutinesPage> {
             final rutinaData = rutinaDoc.data() as Map<String, dynamic>;
             final rutinaRef = rutinaDoc.reference;
 
-            final categorias = rutinaData['categories'] as Map<String, dynamic>? ?? {};
+            final category = rutinaData['category'] as Map<String, dynamic>? ?? {};
+            final secondaryCategories = rutinaData['secondary_categories'] as List<dynamic>? ?? [];
 
             return ListTile(
-              title: Text(rutinaData['title'] ?? 'Sin título', style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: categorias.isNotEmpty
-                  ? Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: categorias.entries.map((entry) {
-                  final nombreCategoria = entry.key;
-                  final valorCategoria = entry.value;
-                  return Chip(
-                    label: Text('$nombreCategoria $valorCategoria'),
-                  );
-                }).toList(),
-              )
-                  : null,
+              title: Text(rutinaData['title'] ?? 'Sin título', 
+                style: const TextStyle(fontWeight: FontWeight.bold)
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (category.isNotEmpty)
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: category.entries.map((entry) {
+                        return Chip(
+                          label: Text('${entry.key}: ${entry.value}'),
+                          backgroundColor: Colors.purple.withOpacity(0.1),
+                          labelStyle: const TextStyle(color: Colors.purple),
+                        );
+                      }).toList(),
+                    ),
+                  if (secondaryCategories.isNotEmpty)
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: secondaryCategories.map((cat) {
+                        final entry = (cat as Map<String, dynamic>).entries.first;
+                        return Chip(
+                          label: Text('${entry.key}: ${entry.value}'),
+                          backgroundColor: Colors.purple.withOpacity(0.05),
+                          side: BorderSide(color: Colors.purple.withOpacity(0.3)),
+                          labelStyle: TextStyle(color: Colors.purple.withOpacity(0.8)),
+                        );
+                      }).toList(),
+                    ),
+                ],
+              ),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.push(

@@ -38,7 +38,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "continue_": MessageLookupByLibrary.simpleMessage("Continue"),
     "createAccount": MessageLookupByLibrary.simpleMessage("Create an account"),
+    "createFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Create a family circle",
+    ),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "editFamilyCircle": MessageLookupByLibrary.simpleMessage("Family circles"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "editRoutines": MessageLookupByLibrary.simpleMessage("Edit Routines"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -46,12 +50,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterPassword": MessageLookupByLibrary.simpleMessage(
       "Enter your password",
     ),
+    "familyCircle": MessageLookupByLibrary.simpleMessage("Family Circle"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "invalidAge": MessageLookupByLibrary.simpleMessage(
       "The age must be a valid number.",
     ),
     "invalidEmailFormat": MessageLookupByLibrary.simpleMessage(
       "The email address is not valid.",
+    ),
+    "joinFamilyCicle": MessageLookupByLibrary.simpleMessage(
+      "Join a family circle",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Log out"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),

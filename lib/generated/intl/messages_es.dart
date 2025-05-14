@@ -40,7 +40,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "continue_": MessageLookupByLibrary.simpleMessage("Continuar"),
     "createAccount": MessageLookupByLibrary.simpleMessage("Crear una cuenta"),
+    "createFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Crear círculo familiar",
+    ),
     "delete": MessageLookupByLibrary.simpleMessage("Eliminar"),
+    "editFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Círculos familiares",
+    ),
     "editProfile": MessageLookupByLibrary.simpleMessage("Editar Perfil"),
     "editRoutines": MessageLookupByLibrary.simpleMessage("Editar Rutinas"),
     "email": MessageLookupByLibrary.simpleMessage("Correo electrónico"),
@@ -50,12 +56,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterPassword": MessageLookupByLibrary.simpleMessage(
       "Introduce tu contraseña",
     ),
+    "familyCircle": MessageLookupByLibrary.simpleMessage("Círculo Familiar"),
     "home": MessageLookupByLibrary.simpleMessage("Inicio"),
     "invalidAge": MessageLookupByLibrary.simpleMessage(
       "La edad debe ser un número válido.",
     ),
     "invalidEmailFormat": MessageLookupByLibrary.simpleMessage(
       "La dirección de correo electrónico no es válida.",
+    ),
+    "joinFamilyCicle": MessageLookupByLibrary.simpleMessage(
+      "Unirse a un círculo familiar",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
     "name": MessageLookupByLibrary.simpleMessage("Nombre"),
