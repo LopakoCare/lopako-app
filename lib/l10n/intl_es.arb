@@ -43,8 +43,7 @@
   "familyCircle": "Círculo Familiar",
   "joinFamilyCicle" : "Unirse a un círculo familiar",
   "createFamilyCircle":  "Crear círculo familiar",
-  "editFamilyCircle": "Círculos familiares"
-  "world": "Hola mundo!",
+  "editFamilyCircle": "Círculos familiares",
   "chatbot": "Asistente Virtual",
   "@chatbot": {
     "description": "Etiqueta para el elemento de navegación del chatbot"

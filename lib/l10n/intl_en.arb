@@ -43,8 +43,7 @@
   "familyCircle": "Family Circle",
   "joinFamilyCicle" : "Join a family circle",
   "createFamilyCircle":  "Create a family circle",
-  "editFamilyCircle": "Family circles"
-  "world": "Hello world!",
+  "editFamilyCircle": "Family circles",
   "chatbot": "Chat Assistant",
   "@chatbot": {
     "description": "Label for the chatbot navigation item"
