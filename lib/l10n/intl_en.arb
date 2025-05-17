@@ -44,8 +44,8 @@
   "joinFamilyCicle" : "Join a family circle",
   "createFamilyCircle":  "Create a family circle",
   "editFamilyCircle": "Family circles",
-  "chatbot": "Chat Assistant",
+  "chatbot": "Chatbot",
   "@chatbot": {
-    "description": "Label for the chatbot navigation item"
+    "description": "Label for the chatbot tab or feature"
   }
 }

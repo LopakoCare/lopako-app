@@ -57,6 +57,7 @@ dependencies:
 
   # Font Awesome
   font_awesome_flutter: ^10.8.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

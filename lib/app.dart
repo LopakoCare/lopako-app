@@ -56,28 +56,23 @@ class MyApp extends StatelessWidget {
           '/calendar': (context) => const CalendarScreen(),
           '/family/choice': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map?;
-            final userAge = args?['userAge'] as int;
-
+            final userAge = args?['userAge'] as int? ?? 0;
             return FamilyCircleChoiceScreen(userAge: userAge);
           },
           '/family/join': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map?;
-            final userAge = args?['userAge'] as int;
-
+            final userAge = args?['userAge'] as int? ?? 0;
             return JoinFamilyCodeScreen(userAge: userAge);
           },
-
           '/family/details': (context) {
-            final args = ModalRoute.of(context)!.settings.arguments as Map;
-
+            final args = ModalRoute.of(context)!.settings.arguments as Map?;
             return FamilyCircleDetailsScreen(
-              isCreating: args['isCreating'] ?? false,
-              patientName: args['patientName'],
-              familyId: args['familyId'],
-              userAge: args['userAge']
+              isCreating: args?['isCreating'] ?? false,
+              patientName: args?['patientName'],
+              familyId: args?['familyId'],
+              userAge: args?['userAge'] ?? 0,
             );
           },
-          '/routines': (context) => const RoutinesScreen(),
           '/chatbot': (context) => const ChatbotScreen(),
         },
       ),

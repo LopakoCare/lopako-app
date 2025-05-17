@@ -39,7 +39,10 @@ class _AppWrapperState extends State<AppWrapper> {
     }
 
     if (authController.wasJustRegistered) {
-      ///return const FamilyCircleChoiceScreen();
+      // Provide the required userAge parameter.
+      // Using 0 as a default, similar to how your named route handles it.
+      // You might need to adjust this if AuthController can provide a more specific age.
+      return const FamilyCircleChoiceScreen(userAge: 0); 
     }
 
     return MainTabScreen();
