@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lopako_app_lis/features/routines/controllers/routines_controller.dart';
 import 'package:lopako_app_lis/features/routines/screens/routine_details_page.dart';
+import 'package:lopako_app_lis/features/routines/widgets/youtube_video_player_widget.dart';
 
 Color parseNamedColor(String? colorName) {
   const colorMap = {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lopako_app_lis/features/routines/controllers/routines_controller.dart';
 import 'package:lopako_app_lis/features/routines/models/actividad.dart';
+import 'package:lopako_app_lis/features/routines/widgets/youtube_video_player_widget.dart';
 
 class RoutineDetailsPage extends StatefulWidget {
   final DocumentReference rutinaRef;
@@ -25,9 +26,15 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final category = widget.rutinaData['category'] as Map<String, dynamic>?;
     final secondaryCategories = widget.rutinaData['secondary_categories'] as List<dynamic>?;
+    final videoId = widget.rutinaData['videoId'] as String?;
 
     return Scaffold(
       appBar: AppBar(
@@ -54,7 +61,21 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage> {
                 Text('Frecuencia: ${widget.rutinaData['schedule'] ?? 'N/A'}'),
                 if (widget.rutinaData['icon'] != null)
                   Text('Icono: ${widget.rutinaData['icon']}'),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
+
+                // Video de YouTube si existe videoId
+                if (videoId != null && videoId.isNotEmpty) ...[
+                  Text(
+                    'Vídeo explicativo:',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  YouTubeVideoPlayer(
+                    videoId: videoId,
+                    autoPlay: false,
+                  ),
+                  const SizedBox(height: 16),
+                ],
 
                 if (category != null && category.isNotEmpty)
                   Container(
@@ -121,7 +142,8 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage> {
                   onPressed: () async {
                     final mensaje = await _controller.anadirRutinaAFamilia(widget.rutinaRef);
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensaje)));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(mensaje)));
                     }
                   },
                   style: ElevatedButton.styleFrom(
