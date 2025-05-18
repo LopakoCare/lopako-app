@@ -3,6 +3,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lopako_app_lis/features/routines/controllers/routines_controller.dart';
 import 'package:lopako_app_lis/features/routines/screens/routine_details_page.dart';
 
+Color parseNamedColor(String? colorName) {
+  const colorMap = {
+    'red': Colors.red,
+    'blue': Colors.blue,
+    'teal': Colors.teal,
+    'green': Colors.green,
+    'yellow': Colors.yellow,
+    'orange': Colors.orange,
+    'purple': Colors.purple,
+    'pink': Colors.pink,
+    'brown': Colors.brown,
+    'grey': Colors.grey,
+    'black': Colors.black,
+    'white': Colors.white,
+  };
+
+  if (colorName == null) return Colors.grey;
+
+  return colorMap[colorName.toLowerCase()] ?? Colors.grey;
+}
+
 class RoutinesPage extends StatefulWidget {
   const RoutinesPage({Key? key}) : super(key: key);
 
@@ -11,14 +32,17 @@ class RoutinesPage extends StatefulWidget {
 }
 
 class _RoutinesPageState extends State<RoutinesPage> {
-  final RoutinesController _controller = RoutinesController();
   final TextEditingController _searchController = TextEditingController();
+  final CollectionReference _catsRef = FirebaseFirestore.instance.collection('routine_categories');
+  final CollectionReference _rutasRef = FirebaseFirestore.instance.collection('routines');
+
   Set<String> _categoriasSeleccionadas = {};
+  Map<String, String> _categoryLabels = {}; // id -> label
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_onSearchChanged);
+    _searchController.addListener(() => setState(() {}));
   }
 
   @override
@@ -27,21 +51,15 @@ class _RoutinesPageState extends State<RoutinesPage> {
     super.dispose();
   }
 
-  void _onSearchChanged() {
-    setState(() {}); // Para que se actualice al escribir
-  }
-
   @override
   Widget build(BuildContext context) {
-    final rutinasRef = FirebaseFirestore.instance.collection('routines');
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Explorar Rutinas"),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60.0),
+          preferredSize: const Size.fromHeight(60),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: TextField(
               controller: _searchController,
               decoration: const InputDecoration(
@@ -55,160 +73,166 @@ class _RoutinesPageState extends State<RoutinesPage> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          _buildCategoryFilters(),
-          Expanded(child: _buildRutinasList(rutinasRef)),
-        ],
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _catsRef.snapshots(),
+        builder: (ctx, catSnap) {
+          if (!catSnap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // 1) construimos el mapa id->label
+          _categoryLabels = {
+            for (var doc in catSnap.data!.docs)
+              doc.id: (doc.data() as Map<String, dynamic>)['label'] as String
+          };
+
+          return Column(
+            children: [
+              // 2) filtro horizontal
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: catSnap.data!.docs.map((doc) {
+                      final id    = doc.id;
+                      final data  = doc.data() as Map<String, dynamic>;
+                      final label = data['label'] ?? 'Sin nombre';
+                      final color = parseNamedColor(data['color']);
+                      final sel   = _categoriasSeleccionadas.contains(id);
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: FilterChip(
+                          label: Text(label),
+                          selected: sel,
+                          backgroundColor: color,
+                          selectedColor: Colors.purple[200],
+                          showCheckmark: false,
+                          onSelected: (yes) {
+                            setState(() {
+                              if (yes) _categoriasSeleccionadas.add(id);
+                              else     _categoriasSeleccionadas.remove(id);
+                            });
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+
+              // 3) lista de rutinas
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _rutasRef.snapshots(),
+                  builder: (ctx2, rutaSnap) {
+                    if (rutaSnap.connectionState == ConnectionState.waiting)
+                      return const Center(child: CircularProgressIndicator());
+                    if (rutaSnap.hasError)
+                      return Center(child: Text('Error: ${rutaSnap.error}'));
+
+                    final docs = rutaSnap.data?.docs ?? [];
+                    // 4) filtrado AND sobre principal+secundarias
+                    final filtradas = docs.where((doc) {
+                      final d      = doc.data() as Map<String, dynamic>;
+                      final title  = (d['title'] ?? '').toString().toLowerCase();
+                      final query  = _searchController.text.toLowerCase();
+                      if (query.isNotEmpty && !title.contains(query)) return false;
+
+                      // si no hay filtro, pasamos todo
+                      if (_categoriasSeleccionadas.isEmpty) return true;
+
+                      // categorías principales
+                      final mainMap = (d['category'] as Map<String, dynamic>?) ?? {};
+                      // secundarias
+                      final secList = (d['secondary_categories'] as List<dynamic>?)
+                          ?.map((e) => (e as Map<String,dynamic>).keys.first)
+                          .toList() ?? [];
+
+                      // **AND** lógico: cada catId seleccionada debe estar en mainMap.keys ∪ secList
+                      return _categoriasSeleccionadas.every((catId) =>
+                      mainMap.keys.contains(catId) || secList.contains(catId)
+                      );
+                    }).toList();
+
+                    if (filtradas.isEmpty) {
+                      return const Center(child: Text('No hay rutinas que coincidan.'));
+                    }
+
+                    return ListView.builder(
+                      itemCount: filtradas.length,
+                      itemBuilder: (_, i) {
+                        final doc = filtradas[i];
+                        final d   = doc.data() as Map<String, dynamic>;
+
+                        // mostramos label y valor, no id
+                        final mainMap = (d['category'] as Map<String, dynamic>?) ?? {};
+                        final secList = (d['secondary_categories'] as List<dynamic>?)
+                            ?.map((e) => e as Map<String,dynamic>)
+                            .toList() ?? [];
+
+                        return ListTile(
+                          title: Text(
+                            d['title'] ?? 'Sin título',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (mainMap.isNotEmpty)
+                                Wrap(
+                                  spacing: 6, runSpacing: 6,
+                                  children: mainMap.entries.map((entry) {
+                                    final label = _categoryLabels[entry.key] ?? entry.key;
+                                    return Chip(
+                                      label: Text('$label: ${entry.value}'),
+                                      backgroundColor: Colors.purple.withOpacity(0.1),
+                                      labelStyle: const TextStyle(color: Colors.purple),
+                                    );
+                                  }).toList(),
+                                ),
+                              if (secList.isNotEmpty)
+                                Wrap(
+                                  spacing: 6, runSpacing: 6,
+                                  children: secList.map((m) {
+                                    final key   = m.keys.first;
+                                    final val   = m.values.first;
+                                    final label = _categoryLabels[key] ?? key;
+                                    return Chip(
+                                      label: Text('$label: $val'),
+                                      backgroundColor: Colors.purple.withOpacity(0.05),
+                                      side: BorderSide(color: Colors.purple.withOpacity(0.3)),
+                                      labelStyle:
+                                      TextStyle(color: Colors.purple.withOpacity(0.8)),
+                                    );
+                                  }).toList(),
+                                ),
+                            ],
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RoutineDetailsPage(
+                                  rutinaRef: doc.reference,
+                                  rutinaData: d,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
-
-  Widget _buildCategoryFilters() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('categories').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Padding(padding: EdgeInsets.all(8), child: CircularProgressIndicator());
-
-        final categoriesDocs = snapshot.data!.docs;
-        if (categoriesDocs.isEmpty) return const SizedBox();
-
-        return Container(
-          color: Colors.grey[200],
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: categoriesDocs.map((doc) {
-                final data = doc.data() as Map<String, dynamic>;
-                final categoryName = data['name'] ?? 'Sin nombre';
-                final isSelected = _categoriasSeleccionadas.contains(categoryName);
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: FilterChip(
-                    label: Text(categoryName),
-                    selected: isSelected,
-                    selectedColor: Colors.purple[200],
-                    showCheckmark: false,
-                    onSelected: (selected) {
-                      setState(() {
-                        if (selected) {
-                          _categoriasSeleccionadas.add(categoryName);
-                        } else {
-                          _categoriasSeleccionadas.remove(categoryName);
-                        }
-                      });
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildRutinasList(CollectionReference rutinasRef) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: rutinasRef.snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-
-        final rutinasDocs = snapshot.data?.docs ?? [];
-        if (rutinasDocs.isEmpty) {
-          return const Center(child: Text('No hay rutinas disponibles.'));
-        }
-
-        final filteredRutinas = rutinasDocs.where((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          final category = data['category'] as Map<String, dynamic>?;
-          final title = (data['title'] ?? '').toString().toLowerCase();
-          final query = _searchController.text.toLowerCase();
-
-          if (query.isNotEmpty && !title.contains(query)) {
-            return false;
-          }
-
-          if (_categoriasSeleccionadas.isEmpty) {
-            return true;
-          }
-          if (category == null) return false;
-
-          return _categoriasSeleccionadas.every((cat) => category.keys.contains(cat));
-        }).toList();
-
-        if (filteredRutinas.isEmpty) {
-          return const Center(child: Text('No hay rutinas que coincidan con la búsqueda o filtros.'));
-        }
-
-        return ListView.builder(
-          itemCount: filteredRutinas.length,
-          itemBuilder: (context, index) {
-            final rutinaDoc = filteredRutinas[index];
-            final rutinaData = rutinaDoc.data() as Map<String, dynamic>;
-            final rutinaRef = rutinaDoc.reference;
-
-            final category = rutinaData['category'] as Map<String, dynamic>? ?? {};
-            final secondaryCategories = rutinaData['secondary_categories'] as List<dynamic>? ?? [];
-
-            return ListTile(
-              title: Text(rutinaData['title'] ?? 'Sin título', 
-                style: const TextStyle(fontWeight: FontWeight.bold)
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (category.isNotEmpty)
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: category.entries.map((entry) {
-                        return Chip(
-                          label: Text('${entry.key}: ${entry.value}'),
-                          backgroundColor: Colors.purple.withOpacity(0.1),
-                          labelStyle: const TextStyle(color: Colors.purple),
-                        );
-                      }).toList(),
-                    ),
-                  if (secondaryCategories.isNotEmpty)
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: secondaryCategories.map((cat) {
-                        final entry = (cat as Map<String, dynamic>).entries.first;
-                        return Chip(
-                          label: Text('${entry.key}: ${entry.value}'),
-                          backgroundColor: Colors.purple.withOpacity(0.05),
-                          side: BorderSide(color: Colors.purple.withOpacity(0.3)),
-                          labelStyle: TextStyle(color: Colors.purple.withOpacity(0.8)),
-                        );
-                      }).toList(),
-                    ),
-                ],
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RoutineDetailsPage(
-                      rutinaRef: rutinaRef,
-                      rutinaData: rutinaData,
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }
 }
+
