@@ -449,6 +449,156 @@ class S {
       args: [],
     );
   }
+
+  /// `Select at least one option.`
+  String get selectAtLeastOneOption {
+    return Intl.message(
+      'Select at least one option.',
+      name: 'selectAtLeastOneOption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Answer required questions`
+  String get missingRequiredAnswers {
+    return Intl.message(
+      'Answer required questions',
+      name: 'missingRequiredAnswers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Family circle created!`
+  String get familyCircleCreated {
+    return Intl.message(
+      'Family circle created!',
+      name: 'familyCircleCreated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share the code with other caregivers to help together in the patient's well-being.`
+  String get shareFamilyCirclePinDescription {
+    return Intl.message(
+      'Share the code with other caregivers to help together in the patient\'s well-being.',
+      name: 'shareFamilyCirclePinDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish`
+  String get finish {
+    return Intl.message('Finish', name: 'finish', desc: '', args: []);
+  }
+
+  /// `Discover routines`
+  String get discoverRoutines {
+    return Intl.message(
+      'Discover routines',
+      name: 'discoverRoutines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get search {
+    return Intl.message('Search', name: 'search', desc: '', args: []);
+  }
+
+  /// `Recommended routines`
+  String get recommendedRoutines {
+    return Intl.message(
+      'Recommended routines',
+      name: 'recommendedRoutines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading...`
+  String get loading {
+    return Intl.message('Loading...', name: 'loading', desc: '', args: []);
+  }
+
+  /// `No routines found.`
+  String get noRoutinesFound {
+    return Intl.message(
+      'No routines found.',
+      name: 'noRoutinesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All the areas in which this routine helps you.`
+  String get routineCategoriesScoresHelpText {
+    return Intl.message(
+      'All the areas in which this routine helps you.',
+      name: 'routineCategoriesScoresHelpText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What you will learn?`
+  String get whatYouWillLearn {
+    return Intl.message(
+      'What you will learn?',
+      name: 'whatYouWillLearn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What will we do?`
+  String get whatWillWeDo {
+    return Intl.message(
+      'What will we do?',
+      name: 'whatWillWeDo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Later`
+  String get later {
+    return Intl.message('Later', name: 'later', desc: '', args: []);
+  }
+
+  /// `Start now`
+  String get startNow {
+    return Intl.message('Start now', name: 'startNow', desc: '', args: []);
+  }
+
+  /// `Today`
+  String get today {
+    return Intl.message('Today', name: 'today', desc: '', args: []);
+  }
+
+  /// `Tomorrow`
+  String get tomorrow {
+    return Intl.message('Tomorrow', name: 'tomorrow', desc: '', args: []);
+  }
+
+  /// `Morning`
+  String get morning {
+    return Intl.message('Morning', name: 'morning', desc: '', args: []);
+  }
+
+  /// `Afternoon`
+  String get afternoon {
+    return Intl.message('Afternoon', name: 'afternoon', desc: '', args: []);
+  }
+
+  /// `Night`
+  String get night {
+    return Intl.message('Night', name: 'night', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

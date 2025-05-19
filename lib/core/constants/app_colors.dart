@@ -56,6 +56,24 @@ class AppColors {
     },
   );
 
+  // Yellow
+  static const MaterialColor yellow = MaterialColor(
+    0xFFFFBB00,
+    <int, Color>{
+      50: Color(0xFFFFF8E5),
+      100: Color(0xFFFFF1CC),
+      200: Color(0xFFFFE499),
+      300: Color(0xFFFFD666),
+      400: Color(0xFFFFC933),
+      500: Color(0xFFFFBB00),
+      600: Color(0xFFCC9600),
+      700: Color(0xFF997000),
+      800: Color(0xFF664B00),
+      900: Color(0xFF332500),
+      950: Color(0xFF191300),
+    },
+  );
+
   // Red
   static const MaterialColor red = MaterialColor(
     0xFFFF4433,
@@ -71,6 +89,42 @@ class AppColors {
       800: Color(0xFF7A0A00),
       900: Color(0xFF3D0500),
       950: Color(0xFF1F0300),
+    },
+  );
+
+  // Pink
+  static const MaterialColor pink = MaterialColor(
+    0xFFFF11FF,
+    <int, Color>{
+      50: Color(0xFFFFE5FF),
+      100: Color(0xFFFFD1FF),
+      200: Color(0xFFFF9EFF),
+      300: Color(0xFFFF70FF),
+      400: Color(0xFFFF42FF),
+      500: Color(0xFFFF11FF),
+      600: Color(0xFFDB00DB),
+      700: Color(0xFFA300A3),
+      800: Color(0xFF6B006B),
+      900: Color(0xFF380038),
+      950: Color(0xFF190019),
+    },
+  );
+
+  // Teal
+  static const MaterialColor teal = MaterialColor(
+    0xFF00CCCC,
+    <int, Color>{
+      50: Color(0xFFE0FFFF),
+      100: Color(0xFFC2FFFF),
+      200: Color(0xFF85FFFF),
+      300: Color(0xFF47FFFF),
+      400: Color(0xFF0AFFFF),
+      500: Color(0xFF00CCCC),
+      600: Color(0xFF00A3A3),
+      700: Color(0xFF007A7A),
+      800: Color(0xFF005252),
+      900: Color(0xFF002929),
+      950: Color(0xFF001414),
     },
   );
 

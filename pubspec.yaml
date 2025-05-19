@@ -53,11 +53,17 @@ dependencies:
   # Intl es necesario para las traducciones
   intl: any
 
+  # Memoria caché
+  shared_preferences: ^2.5.3
+
   # Google Fonts
   google_fonts: ^6.2.1
 
   # Font Awesome
   font_awesome_flutter: ^10.8.0
+
+  # Launcher Icons
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:

@@ -5,9 +5,10 @@ import 'app_colors.dart';
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
+      canvasColor: AppColors.white,
       primarySwatch: AppColors.primary,
       scaffoldBackgroundColor: AppColors.white,
-      fontFamily: GoogleFonts.inter().fontFamily,
+      fontFamily: GoogleFonts.asap().fontFamily,
       textTheme: TextTheme(
         headlineLarge: TextStyle(
           fontSize: 28.0,
@@ -37,7 +38,7 @@ class AppTheme {
           ),
           minimumSize: Size(double.infinity, 48),
           textStyle: TextStyle(
-            fontSize: 16.0,
+            fontSize: 18.0,
             fontWeight: FontWeight.w500,
           ),
           elevation: 0,
@@ -142,6 +143,39 @@ class AppTheme {
             width: 2.0,
           ),
         )
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.red[700],
+        contentTextStyle: TextStyle(
+          color: AppColors.white,
+          fontSize: 16.0,
+          fontWeight: FontWeight.w500,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        elevation: 0,
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        elevation: 0,
+        hoverElevation: 0,
+        focusElevation: 0,
+        highlightElevation: 0,
+      ),
+      cardTheme: CardTheme(
+        color: AppColors.neutral[50],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        elevation: 0,
+        shadowColor: AppColors.transparent,
+        margin: EdgeInsets.zero,
       ),
     );
   }

@@ -55,7 +55,7 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          HomeScreen(key: PageStorageKey('routines')),
+          HomeScreen(key: PageStorageKey('old_routines')),
           CalendarScreen(key: PageStorageKey('calendar')),
           SettingsScreen(key: PageStorageKey('settings')),
         ],

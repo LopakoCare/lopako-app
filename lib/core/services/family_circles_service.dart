@@ -14,38 +14,86 @@ class FamilyCirclesService extends BaseService {
       'id': 'relation',
       'type': 'user',
       'description': '¿Cuál es tu relación con el paciente?',
+      'required': true,
       'options': [
         {
-          'id': 'family',
+          'value': 'family',
           'icon': 'heart',
           'label': 'Familiar',
           'description': 'Pertenece a tu familia, ya sea de forma cercana como indirecta.',
         },
         {
-          'id': 'caregiver',
+          'value': 'caregiver',
           'icon': 'girl',
           'label': 'Cuidador/a',
           'description': 'Eres voluntario o te encargas del cuidado del paciente para su bienestar.'
+        }
+      ]
+    },
+    {
+      'id': 'age',
+      'type': 'patient',
+      'description': '¿Qué edad tiene el paciente?',
+      'required': true,
+      'options': [
+        {
+          'value': '<40',
+          'label': 'Menos de 40 años',
+        },
+        {
+          'value': '41-60',
+          'label': 'Entre 41 y 60 años',
+        },
+        {
+          'value': '61-80',
+          'label': 'Entre 61 y 80 años',
+        },
+        {
+          'value': '>80',
+          'label': 'Más de 80 años',
+        }
+      ]
+    },
+    {
+      'id': 'availability',
+      'type': 'user',
+      'description': '¿Qué disponibilidad tienes para ayudar?',
+      'required': true,
+      'options': [
+        {
+          'value': 'daily',
+          'label': 'Todos los días',
+        },
+        {
+          'value': 'weekly',
+          'label': '2-3 veces a la semana',
+        },
+        {
+          'value': 'monthly',
+          'label': 'Alguna vez al mes',
+        },
+        {
+          'value': 'occasionally',
+          'label': 'Ocasionalmente',
         }
       ]
     }
   ];
 
   /* ───── CREATE ───── */
-  Future<String> create(String patientName) async {
+  Future<String> create(String patientName, Map<String, dynamic> questionary) async {
     final auth = serviceManager.getService<AuthService>('auth');
     final uid = auth.currentUser!.uid;
 
     final pin = await _generateUniquePin();
 
-    final doc = await _db.collection('familyCircles').add({
+    final doc = await _db.collection('family_circles').add({
       'patientName': patientName,
       'createdBy': uid,
       'members': [uid],
       'pin': pin,
       'createdAt': FieldValue.serverTimestamp(),
     });
-
     return doc.id; // id del círculo
   }
 
@@ -55,7 +103,7 @@ class FamilyCirclesService extends BaseService {
     final uid = auth.currentUser!.uid;
 
     final q = await _db
-        .collection('familyCircles')
+        .collection('family_circles')
         .where('pin', isEqualTo: pin)
         .limit(1)
         .get();
@@ -67,6 +115,15 @@ class FamilyCirclesService extends BaseService {
     });
   }
 
+  /* ───── getFamilyCircle ───── */
+  Future<Map<String, dynamic>?> getFamilyCircle(String id) async {
+    final doc = await _db.collection('family_circles').doc(id).get();
+    if (doc.exists) {
+      return doc.data() as Map<String, dynamic>;
+    }
+    return null;
+  }
+
   /* ───── helper para PIN único ───── */
   Future<String> _generateUniquePin() async {
     String pin;
@@ -74,7 +131,7 @@ class FamilyCirclesService extends BaseService {
     do {
       pin = (_rand.nextInt(900000) + 100000).toString(); // 100000-999999
       exists = (await _db
-          .collection('familyCircles')
+          .collection('family_circles')
           .where('pin', isEqualTo: pin)
           .limit(1)
           .get())

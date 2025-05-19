@@ -49,7 +49,7 @@ class UserService extends BaseService {
   /* ───── FAMILY CIRCLES DEL USUARIO ───── */
   Future<List<String>> getFamilyCircles(String uid) async {
     final query = await _db
-        .collection('familyCircles')
+        .collection('family_circles')
         .where('members', arrayContains: uid)
         .get();
 

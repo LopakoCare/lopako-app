@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lopako_app_lis/generated/l10n.dart';
-import 'package:lopako_app_lis/features/routines/screens/activities_page.dart';
-import 'package:lopako_app_lis/features/routines/screens/discover_routines_page.dart';
-import 'package:lopako_app_lis/features/routines/screens/routine_details_page.dart';
-import 'package:lopako_app_lis/features/familiar_circles/controllers/familiar_circles_controllers.dart';
-import 'package:lopako_app_lis/features/routines/controllers/routines_controller.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lopako_app_lis/core/constants/app_colors.dart';
+import 'package:lopako_app_lis/features/routines/screens/discover_routines_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,136 +11,163 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final FamiliarRoutinesController _controller = FamiliarRoutinesController();
-  final RoutinesController _routinesController = RoutinesController();
-  late Future<List<Map<String, dynamic>>> _rutinasFuturas;
+  final double _minSheetExtent = 0.2;
+  final double _maxSheetExtent = 0.6;
+  double _currentExtent;
+
+  final double _hideLogoStart = 0.15;
+  final double _hideLogoEnd = 0.35;
+  final double _logoMaxSize = 140;
+  final double _logoMinSize = 120;
+  final double _paddingMaxSize = 120;
+  final double _paddingMinSize = 0;
+
+  _HomeScreenState() : _currentExtent = 0.2;
+
+  bool _hasResetScroll = false;
+
+  late final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
 
   @override
   void initState() {
     super.initState();
-    _rutinasFuturas = _initializeRutinas();
+    _sheetController.addListener(_onSheetScroll);
   }
 
-  Future<List<Map<String, dynamic>>> _initializeRutinas() async {
-    try {
-      return await _controller.cargarRutinasAsignadas();
-    } catch (e) {
-      return [];
+  @override
+  void dispose() {
+    _sheetController.removeListener(_onSheetScroll);
+    super.dispose();
+  }
+
+  void _onSheetScroll() {
+    final e = _sheetController.size.clamp(_minSheetExtent, _maxSheetExtent);
+    if ((e - _currentExtent).abs() > 0.5) {
+      setState(() => _currentExtent = e);
     }
   }
 
-  void _actualizarRutinas() {
-    setState(() {
-      _rutinasFuturas = _initializeRutinas();
-    });
+  Widget _buildHeader(BuildContext context) {
+    final extent = _sheetController.isAttached
+      ? _sheetController.size.clamp(_minSheetExtent, _maxSheetExtent)
+      : _minSheetExtent;
+    final headerHeight = MediaQuery.of(context).size.height * (1 - extent);
+
+    final t = (extent - _minSheetExtent) / (_maxSheetExtent - _minSheetExtent);
+    final logoOpacity = 1 - ((t - 0.15) / (0.35 - 0.15)).clamp(0.0, 1.0);
+    final logoSize = 120 + (140 - 120) * logoOpacity;
+    final logoPad  = 120 - (120 * t);
+
+    return SizedBox(
+      height: headerHeight,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: logoPad),
+            child: const Center(
+              child: Text('Hello World',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          Positioned(
+            top: 80, left: 0, right: 0,
+            child: Opacity(
+              opacity: logoOpacity,
+              child: Center(
+                child: SizedBox(
+                  width: logoSize, height: logoSize,
+                  child: Image.asset('assets/images/logo.png'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final localizations = S.of(context);
+    final t = (_currentExtent - _minSheetExtent) / (_maxSheetExtent - _minSheetExtent);
+    double hideLogoProgress = (t - _hideLogoStart) / (_hideLogoEnd - _hideLogoStart);
+    hideLogoProgress = hideLogoProgress.clamp(0.0, 1.0);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.home),
-      ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _rutinasFuturas,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error al cargar las rutinas: ${snapshot.error}'),
-            );
-          }
-
-          final rutinas = snapshot.data ?? [];
-
-          if (rutinas.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(localizations.world),
-                  ElevatedButton(
-                    onPressed: _actualizarRutinas,
-                    child: const Text('Recargar rutinas'),
+      body: Stack(
+        children: [
+          AnimatedBuilder(
+            animation: _sheetController,
+            builder: (context, _) => _buildHeader(context),
+          ),
+          DraggableScrollableSheet(
+            controller: _sheetController,
+            initialChildSize: _minSheetExtent,
+            minChildSize: _minSheetExtent,
+            maxChildSize: _maxSheetExtent,
+            snap: true,
+            snapSizes: [_minSheetExtent, _maxSheetExtent],
+            builder: (context, scrollController) {
+              if (!_hasResetScroll) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  scrollController.jumpTo(0);
+                });
+                _hasResetScroll = true;
+              }
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    top: BorderSide(
+                      color: AppColors.neutral[200]!,
+                      width: 2,
+                    ),
                   ),
-                ],
-              ),
-            );
-          }
-
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              const Text(
-                'Tus rutinas asignadas:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              ...rutinas.map((rutina) => _buildRutinaCard(rutina)).toList(),
-            ],
-          );
-        },
+                ),
+                child: Stack(
+                  children: [
+                    // Lista de ítems con padding para dejar espacio al indicador
+                    ListView.builder(
+                      controller: scrollController,
+                      itemCount: 20,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text('Item ${index + 1}'),
+                        );
+                      },
+                    ),
+                    // Indicador de arrastre
+                    Positioned(
+                      top: 8,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppColors.neutral[200],
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const RoutinesPage()),
-          );
-          _actualizarRutinas();
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => const DiscoverRoutinesScreen(),
+          ));
         },
-        backgroundColor: Colors.purple,
-        child: const Icon(Icons.search),
-      ),
-    );
-  }
-
-  Widget _buildRutinaCard(Map<String, dynamic> rutina) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        title: Text(rutina['title'] ?? 'Sin título'),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ActivitiesPage(rutina: rutina),
-            ),
-          );
-        },
-        trailing: TextButton(
-          onPressed: () async {
-            final docRef = rutina['__ref__'] as DocumentReference?;
-            if (docRef != null) {
-              try {
-                final mensaje = await _routinesController.completarRutinaYEliminar(docRef);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(mensaje)),
-                );
-                _actualizarRutinas();
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error: $e')),
-                );
-              }
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('No se pudo completar la rutina.')),
-              );
-            }
-          },
-          child: const Text(
-            'Completar',
-            style: TextStyle(color: Colors.green),
-          ),
-        ),
-      ),
+        child: FaIcon(FontAwesomeIcons.magnifyingGlass),
+      )
     );
   }
 }
-

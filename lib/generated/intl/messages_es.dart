@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "addRoutine": MessageLookupByLibrary.simpleMessage("Agregar rutina"),
+    "afternoon": MessageLookupByLibrary.simpleMessage("Tarde"),
     "age": MessageLookupByLibrary.simpleMessage("Edad"),
     "ageRequired": MessageLookupByLibrary.simpleMessage(
       "La edad es obligatoria.",
@@ -48,6 +49,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Crear círculo familiar",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Eliminar"),
+    "discoverRoutines": MessageLookupByLibrary.simpleMessage(
+      "Descubrir rutinas",
+    ),
     "editProfile": MessageLookupByLibrary.simpleMessage("Editar Perfil"),
     "editRoutines": MessageLookupByLibrary.simpleMessage("Editar Rutinas"),
     "email": MessageLookupByLibrary.simpleMessage("Correo electrónico"),
@@ -57,7 +61,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterPassword": MessageLookupByLibrary.simpleMessage(
       "Introduce tu contraseña",
     ),
+    "familyCircleCreated": MessageLookupByLibrary.simpleMessage(
+      "¡Círculo familiar creado!",
+    ),
     "familyOf": MessageLookupByLibrary.simpleMessage("Familia de"),
+    "finish": MessageLookupByLibrary.simpleMessage("Finalizar"),
     "firstFamilyCircleSubtitle": MessageLookupByLibrary.simpleMessage(
       "¡Ya casi estamos! Solo un paso más...",
     ),
@@ -75,10 +83,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "joinCircleDescription": MessageLookupByLibrary.simpleMessage(
       "Únete a un círculo familiar creado anteriormente por otro cuidador.",
     ),
+    "later": MessageLookupByLibrary.simpleMessage("Más tarde"),
+    "loading": MessageLookupByLibrary.simpleMessage("Cargando..."),
     "logout": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
+    "missingRequiredAnswers": MessageLookupByLibrary.simpleMessage(
+      "Responde las preguntas obligatorias",
+    ),
+    "morning": MessageLookupByLibrary.simpleMessage("Mañana"),
     "name": MessageLookupByLibrary.simpleMessage("Nombre"),
     "nameRequired": MessageLookupByLibrary.simpleMessage(
       "El nombre es obligatorio.",
+    ),
+    "night": MessageLookupByLibrary.simpleMessage("Noche"),
+    "noRoutinesFound": MessageLookupByLibrary.simpleMessage(
+      "No se han encontrado rutinas.",
     ),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "or": MessageLookupByLibrary.simpleMessage("o"),
@@ -99,7 +117,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileUpdated": MessageLookupByLibrary.simpleMessage(
       "Perfil actualizado exitosamente",
     ),
+    "recommendedRoutines": MessageLookupByLibrary.simpleMessage(
+      "Rutinas recomendadas",
+    ),
     "routine": MessageLookupByLibrary.simpleMessage("Rutina"),
+    "routineCategoriesScoresHelpText": MessageLookupByLibrary.simpleMessage(
+      "Todas las áreas en las que te ayuda esta rutina.",
+    ),
     "routinesUpdateError": MessageLookupByLibrary.simpleMessage(
       "Error al actualizar las rutinas: ",
     ),
@@ -107,13 +131,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "Rutinas actualizadas exitosamente",
     ),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Guardar Cambios"),
+    "search": MessageLookupByLibrary.simpleMessage("Buscar"),
+    "selectAtLeastOneOption": MessageLookupByLibrary.simpleMessage(
+      "Selecciona al menos una opción.",
+    ),
     "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
+    "shareFamilyCirclePinDescription": MessageLookupByLibrary.simpleMessage(
+      "Comparte el código con otros cuidadores para ayudar conjuntamente en el bienestar del paciente.",
+    ),
     "signIn": MessageLookupByLibrary.simpleMessage("Acceder"),
     "signInTitle": MessageLookupByLibrary.simpleMessage("Acceder"),
     "signUp": MessageLookupByLibrary.simpleMessage("Registrarse"),
     "skip": MessageLookupByLibrary.simpleMessage("Omitir por ahora"),
+    "startNow": MessageLookupByLibrary.simpleMessage("Empezar ahora"),
+    "today": MessageLookupByLibrary.simpleMessage("Hoy"),
+    "tomorrow": MessageLookupByLibrary.simpleMessage("Mañana"),
     "userNotAuthenticated": MessageLookupByLibrary.simpleMessage(
       "Usuario no autenticado",
+    ),
+    "whatWillWeDo": MessageLookupByLibrary.simpleMessage("¿Qué haremos?"),
+    "whatYouWillLearn": MessageLookupByLibrary.simpleMessage(
+      "¿Qué aprenderás?",
     ),
     "world": MessageLookupByLibrary.simpleMessage("Hola mundo!"),
   };
