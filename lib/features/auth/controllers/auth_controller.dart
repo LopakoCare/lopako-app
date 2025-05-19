@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lopako_app_lis/core/services/service_manager.dart';
+import 'package:lopako_app_lis/core/services/user_service.dart';
+import 'package:lopako_app_lis/features/auth/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
 import '../models/auth_state_model.dart';
 
@@ -6,7 +9,8 @@ class AuthController extends ChangeNotifier {
   final AuthService _authService;
   AuthStateModel _state = AuthStateModel();
 
-  AuthController(this._authService);
+  AuthController()
+      : _authService = ServiceManager.instance.getService('auth') as AuthService;
 
   AuthStateModel get state => _state;
 
@@ -193,5 +197,11 @@ class AuthController extends ChangeNotifier {
     await _authService.logout();
     _state = AuthStateModel(); // Reset state after sign out
     notifyListeners();
+  }
+
+  // Get user
+  Future<User?> getUser() async {
+    final usrSrv = ServiceManager.instance.getService('user') as UserService;
+    return await usrSrv.get(uid: _authService.currentUser?.uid);
   }
 }

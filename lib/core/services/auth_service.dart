@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lopako_app_lis/core/services/family_circles_service.dart';
+import 'package:lopako_app_lis/core/services/routines_service.dart';
+import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 
 import 'service_manager.dart';
 import 'user_service.dart';
@@ -40,12 +42,18 @@ class AuthService extends BaseService {
 
   /* ──────────── LOGIN ──────────── */
   Future<User?> login(String email, String password) async {
-    final cred =
-    await _auth.signInWithEmailAndPassword(email: email, password: password);
+    final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
 
     // Recuperamos y cacheamos los datos del usuario si quieres
     final userSvc = serviceManager.getService<UserService>('user');
     await userSvc.get(uid: cred.user!.uid);
+
+    final familyCircles = await userSvc.getFamilyCircles(cred.user!.uid);
+    if (familyCircles.isNotEmpty) {
+      final familyCircleSvc = serviceManager.getService<FamilyCirclesService>('familyCircles');
+      final familyCircle = familyCircleSvc.getFamilyCircle(familyCircles.first);
+      await familyCircleSvc.switchFamilyCircle(familyCircle as FamilyCircle);
+    }
 
     return cred.user;
   }
@@ -75,6 +83,10 @@ class AuthService extends BaseService {
   Future<void> logout() async {
     await _google.signOut();
     await _auth.signOut();
+    final familyCirclesSvc = serviceManager.getService<FamilyCirclesService>('familyCircles');
+    final routinesSvc = serviceManager.getService<RoutinesService>('routines');
+    await familyCirclesSvc.clearCache();
+    await routinesSvc.clearCache();
   }
 
   /* ──────────── PROVEEDOR ──────────── */

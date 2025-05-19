@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
+import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
+import 'package:lopako_app_lis/features/family_circles/screens/share_family_circle_pin_screen.dart';
 import 'package:lopako_app_lis/features/family_circles/widgets/new_family_circle_widget.dart';
 import 'package:lopako_app_lis/features/navigation/screens/main_tab_screen.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
@@ -9,9 +11,9 @@ import '../../family_circles/screens/create_family_circle_screen.dart';
 
 class NewFamilyCircleScreen extends StatelessWidget {
   final VoidCallback onSkip;
-  final VoidCallback onComplete;
+  final void Function(FamilyCircle familyCircle) onComplete;
 
-  const NewFamilyCircleScreen({Key? key, required this.onSkip, required this.onComplete}) : super(key: key);
+  const NewFamilyCircleScreen({super.key, required this.onSkip, required this.onComplete});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class NewFamilyCircleScreen extends StatelessWidget {
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
               ),
+              textAlign: TextAlign.center,
             ),
             Text(localizations.firstFamilyCircleSubtitle,
               style: const TextStyle(
@@ -49,7 +52,19 @@ class NewFamilyCircleScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => CreateFamilyCircleScreen(
-                      onComplete: onComplete,
+                      onComplete: (familyCircle) async {
+                        await Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => ShareFamilyCirclePinScreen(
+                              familyCircle: familyCircle,
+                              onComplete: () {
+                                Navigator.of(context).popUntil((route) => route.isFirst);
+                              },
+                            ),
+                          ),
+                        );
+                        onComplete(familyCircle);
+                      },
                     )
                   )
                 );

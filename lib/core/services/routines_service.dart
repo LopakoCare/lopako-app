@@ -218,7 +218,7 @@ class RoutinesService extends BaseService {
   Future<List<Routine>> getRecommendedRoutines({int? limit, bool forceRefresh = false}) async {
     final routines = await getAllRoutines(forceRefresh: forceRefresh);
 
-    routines.shuffle(_random);  // <-- Replace this
+    routines.shuffle(_random);  // <-- TODO: Replace this
 
     if (limit != null && limit < routines.length) {
       return routines.sublist(0, limit);
@@ -265,5 +265,16 @@ class RoutinesService extends BaseService {
   Future<void> refreshAllData() async {
     await getAllRoutines(forceRefresh: true);
     await getCategories(forceRefresh: true);
+  }
+
+  /// Clear the cache of all routines.
+  Future<void> clearCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kAllRoutinesKey);
+    await prefs.remove(_kCategoriesKey);
+    final keys = prefs.getKeys().where((key) => key.startsWith(_kRoutineKeyPrefix));
+    for (var key in keys) {
+      await prefs.remove(key);
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
 import 'package:lopako_app_lis/core/widgets/icon_3d.dart';
+import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
 import 'package:lopako_app_lis/features/routines/models/routine_activity_model.dart';
 import 'package:lopako_app_lis/features/routines/models/routine_model.dart';
 import 'package:lopako_app_lis/features/routines/widgets/routine_activity_card_widget.dart';
@@ -17,9 +18,13 @@ class RoutineDetailSheet extends StatefulWidget {
 }
 
 class _RoutineDetailSheetState extends State<RoutineDetailSheet> with SingleTickerProviderStateMixin {
+
+  final FamilyCirclesController _familyCirclesController = FamilyCirclesController();
+  
   final _scrollCtrl = ScrollController();
 
   bool _formCollapsed = true;
+  bool _isFormDisabled = false;
   late final AnimationController _formCtrl;
   late final Animation<Offset> _slideForm;
   final Duration _slideAnimationTime = const Duration(milliseconds: 150);
@@ -66,6 +71,50 @@ class _RoutineDetailSheetState extends State<RoutineDetailSheet> with SingleTick
         return S.of(context).night;
       default:
         return key;
+    }
+  }
+  
+  Future<void> scheduleRoutine() async {
+    setState(() {
+      _isFormDisabled = true;
+    });
+    try {
+      await _familyCirclesController.addRoutine(
+        widget.routine,
+        day: _selectedDateOption,
+        period: _selectedPeriodOption,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          margin: const EdgeInsets.all(8),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isFormDisabled = false;
+      });
+    }
+  }
+
+  Future<void> startRoutine() async {
+    setState(() {
+      _isFormDisabled = true;
+    });
+    try {
+      await _familyCirclesController.startRoutine(widget.routine);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          margin: const EdgeInsets.all(8),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isFormDisabled = false;
+      });
     }
   }
 
@@ -293,71 +342,74 @@ class _RoutineDetailSheetState extends State<RoutineDetailSheet> with SingleTick
                       child: Row(
                         children: [
                           Expanded(
-                            child: SlideTransition(
-                              position: _slideForm,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: DropdownButtonFormField<String>(
-                                      value: _selectedDateOption,
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12
+                            child: AbsorbPointer(
+                              absorbing: _isFormDisabled,
+                              child: SlideTransition(
+                                position: _slideForm,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        value: _selectedDateOption,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 12
+                                          ),
                                         ),
-                                      ),
-                                      items: [
-                                        DropdownMenuItem(
-                                          value: 'today',
-                                          child: Text(localizations.today),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: 'tomorrow',
-                                          child: Text(localizations.tomorrow),
-                                        ),
-                                      ],
-                                      onChanged: (v) {
-                                        if (v == null) return;
-                                        setState(() {
-                                          _selectedDateOption = v;
-                                          if (v == 'today') {
-                                            final avail = _getAvailablePeriodsForToday();
-                                            if (!avail.contains(_selectedPeriodOption)) {
-                                              _selectedPeriodOption = avail.first;
+                                        items: [
+                                          DropdownMenuItem(
+                                            value: 'today',
+                                            child: Text(localizations.today),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'tomorrow',
+                                            child: Text(localizations.tomorrow),
+                                          ),
+                                        ],
+                                        onChanged: (v) {
+                                          if (v == null) return;
+                                          setState(() {
+                                            _selectedDateOption = v;
+                                            if (v == 'today') {
+                                              final avail = _getAvailablePeriodsForToday();
+                                              if (!avail.contains(_selectedPeriodOption)) {
+                                                _selectedPeriodOption = avail.first;
+                                              }
+                                            } else {
+                                              _selectedPeriodOption = 'morning';
                                             }
-                                          } else {
-                                            _selectedPeriodOption = 'morning';
-                                          }
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: DropdownButtonFormField<String>(
-                                      value: _selectedPeriodOption,
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 12),
+                                          });
+                                        },
                                       ),
-                                      items: (_selectedDateOption == 'today'
-                                          ? _getAvailablePeriodsForToday()
-                                          : ['morning', 'afternoon', 'night'])
-                                          .map((opt) => DropdownMenuItem(
-                                        value: opt,
-                                        child: Text(_labelForPeriod(opt)),
-                                      ))
-                                          .toList(),
-                                      onChanged: (v) {
-                                        if (v != null) {
-                                          setState(() => _selectedPeriodOption = v);
-                                        }
-                                      },
                                     ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                ],
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        value: _selectedPeriodOption,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 12),
+                                        ),
+                                        items: (_selectedDateOption == 'today'
+                                            ? _getAvailablePeriodsForToday()
+                                            : ['morning', 'afternoon', 'night'])
+                                            .map((opt) => DropdownMenuItem(
+                                          value: opt,
+                                          child: Text(_labelForPeriod(opt)),
+                                        ))
+                                            .toList(),
+                                        onChanged: (v) {
+                                          if (v != null) {
+                                            setState(() => _selectedPeriodOption = v);
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -399,7 +451,7 @@ class _RoutineDetailSheetState extends State<RoutineDetailSheet> with SingleTick
                                     ? AppColors.primary[700]
                                     : Colors.white,
                               ),
-                              onPressed: _toggleForm,
+                              onPressed: _isFormDisabled ? null : _toggleForm,
                               child: AnimatedSwitcher(
                                 duration: _slideAnimationTime,
                                 transitionBuilder:
@@ -435,7 +487,11 @@ class _RoutineDetailSheetState extends State<RoutineDetailSheet> with SingleTick
                           key: ValueKey(_formCollapsed),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: _isFormDisabled
+                        ? null
+                        : _formCollapsed
+                          ? startRoutine
+                          : scheduleRoutine,
                     ),
                   ],
                 ),

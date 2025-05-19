@@ -4,12 +4,13 @@ import 'package:lopako_app_lis/core/constants/app_colors.dart';
 import 'package:lopako_app_lis/core/services/family_circles_service.dart';
 import 'package:lopako_app_lis/core/services/service_manager.dart';
 import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
+import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 import 'package:lopako_app_lis/features/family_circles/screens/share_family_circle_pin_screen.dart';
 import 'package:lopako_app_lis/features/family_circles/widgets/question_card_widget.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 
 class CreateFamilyCircleScreen extends StatefulWidget {
-  final VoidCallback onComplete;
+  final void Function(FamilyCircle familyCircle) onComplete;
 
   const CreateFamilyCircleScreen({Key? key, required this.onComplete}) : super(key: key);
 
@@ -116,12 +117,12 @@ class _CreateFamilyCircleScreenState extends State<CreateFamilyCircleScreen> {
           child: ElevatedButton(
             onPressed: allRequiredAnswered && _formKey.currentState?.validate() == true && !_isCreating
                 ? () async {
-              String pin;
+              FamilyCircle circle;
               setState(() {
                 _isCreating = true;
               });
               try {
-                pin = await _familyCirclesController.create(
+                circle = await _familyCirclesController.create(
                   _patientNameController.text,
                   _answers,
                 );
@@ -137,20 +138,10 @@ class _CreateFamilyCircleScreenState extends State<CreateFamilyCircleScreen> {
                 });
                 return;
               }
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => ShareFamilyCirclePinScreen(
-                    pin: pin,
-                    onComplete: () {
-                      widget.onComplete();
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                    },
-                  ),
-                ),
-              );
               setState(() {
                 _isCreating = false;
               });
+              widget.onComplete(circle);
             } : null,
             child: (allRequiredAnswered && _formKey.currentState?.validate() == true
               ? Text(localizations.createCircle)

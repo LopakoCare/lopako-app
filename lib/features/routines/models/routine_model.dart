@@ -11,6 +11,7 @@ class Routine {
   final String schedule;
   final List<RoutineCategory> subcategories;
   final String title;
+  final DateTime? startsAt;
 
   Routine(this.id, {
     required this.activities,
@@ -21,6 +22,7 @@ class Routine {
     required this.schedule,
     required this.subcategories,
     required this.title,
+    this.startsAt,
   });
 
   Routine copyWith({
@@ -33,6 +35,7 @@ class Routine {
     String? schedule,
     List<RoutineCategory>? subcategories,
     String? title,
+    DateTime? startsAt,
   }) {
     return Routine(
       id ?? this.id,
@@ -44,6 +47,7 @@ class Routine {
       schedule: schedule ?? this.schedule,
       subcategories: subcategories ?? this.subcategories,
       title: title ?? this.title,
+      startsAt: startsAt ?? this.startsAt,
     );
   }
 
@@ -63,6 +67,9 @@ class Routine {
           .map((e) => RoutineCategory(e.key, score: (e.value as num).toInt()))
           .toList(),
       title: json['title'] as String,
+      startsAt: json['startsAt'] != null
+        ? DateTime.parse(json['startsAt'] as String)
+        : null,
     );
   }
 
@@ -78,5 +85,6 @@ class Routine {
       for (var sub in subcategories) sub.id: sub.score,
     },
     'title': title,
+    'startsAt': startsAt?.millisecondsSinceEpoch,
   };
 }

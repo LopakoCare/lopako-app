@@ -1,5 +1,6 @@
 // core/services/user_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lopako_app_lis/features/auth/models/user_model.dart';
 import 'service_manager.dart';
 
 class UserService extends BaseService {
@@ -36,14 +37,21 @@ class UserService extends BaseService {
   }
 
   /* ───── GET ───── */
-  Future<Map<String, dynamic>?> get({String? uid, String? email}) async {
+  Future<User?> get({String? uid, String? email}) async {
     assert(uid != null || email != null, 'Necesitas uid o email');
 
     final docSnap = uid != null
         ? await _db.collection('users').doc(uid).get()
         : await (await _byEmail(email!)).get();
 
-    return docSnap.data();
+    if (!docSnap.exists) return null;
+    final data = docSnap.data()!;
+    return User(
+      docSnap.id,
+      email: data['email'] as String,
+      name: data['name'] as String,
+      age: data['age'] as int?,
+    );
   }
 
   /* ───── FAMILY CIRCLES DEL USUARIO ───── */
@@ -52,7 +60,6 @@ class UserService extends BaseService {
         .collection('family_circles')
         .where('members', arrayContains: uid)
         .get();
-
     return query.docs.map((d) => d.id).toList();
   }
 

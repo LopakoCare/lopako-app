@@ -22,9 +22,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthController>(
-          create: (ctx) => AuthController(
-            ServiceManager.instance.getService<AuthService>('auth'),
-          ),
+          create: (_) => AuthController(),
         ),
         ChangeNotifierProvider<CalendarController>(
           create: (_) => CalendarController(),

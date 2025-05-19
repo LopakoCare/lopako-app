@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
+import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 
 class ShareFamilyCirclePinScreen extends StatefulWidget {
-  final String pin;
+  final FamilyCircle familyCircle;
   final VoidCallback onComplete;
 
   const ShareFamilyCirclePinScreen({
     Key? key,
-    required this.pin,
+    required this.familyCircle,
     required this.onComplete,
   }) : super(key: key);
 
@@ -46,7 +47,7 @@ class _ShareFamilyCirclePinScreenState extends State<ShareFamilyCirclePinScreen>
           ),
           const SizedBox(height: 32),
           Text(
-            widget.pin,
+            widget.familyCircle.pin,
             style: TextStyle(
               fontSize: 64,
               fontWeight: FontWeight.w800,

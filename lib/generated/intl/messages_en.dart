@@ -20,8 +20,19 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(patientName) => "Family of ${patientName}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "addFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Add family circle",
+    ),
+    "addFamilyCircleDecision": MessageLookupByLibrary.simpleMessage(
+      "Do you want to create a new family circle or join an existing one?",
+    ),
+    "addOtherFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Add other family circle",
+    ),
     "addRoutine": MessageLookupByLibrary.simpleMessage("Add routine"),
     "afternoon": MessageLookupByLibrary.simpleMessage("Afternoon"),
     "age": MessageLookupByLibrary.simpleMessage("Age"),
@@ -50,6 +61,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "discoverRoutines": MessageLookupByLibrary.simpleMessage(
       "Discover routines",
     ),
+    "editFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Edit family circle",
+    ),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "editRoutines": MessageLookupByLibrary.simpleMessage("Edit Routines"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -60,7 +74,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "familyCircleCreated": MessageLookupByLibrary.simpleMessage(
       "Family circle created!",
     ),
+    "familyCircles": MessageLookupByLibrary.simpleMessage("Family circles"),
     "familyOf": MessageLookupByLibrary.simpleMessage("Family of"),
+    "familyOfPatientName": m0,
     "finish": MessageLookupByLibrary.simpleMessage("Finish"),
     "firstFamilyCircleSubtitle": MessageLookupByLibrary.simpleMessage(
       "We are almost there! Just one more step...",
@@ -124,10 +140,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "routinesUpdated": MessageLookupByLibrary.simpleMessage(
       "Routines updated successfully",
     ),
+    "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Save Changes"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "selectAtLeastOneOption": MessageLookupByLibrary.simpleMessage(
       "Select at least one option.",
+    ),
+    "selectFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Select a family circle",
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "shareFamilyCirclePinDescription": MessageLookupByLibrary.simpleMessage(

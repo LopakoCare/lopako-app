@@ -599,6 +599,81 @@ class S {
   String get night {
     return Intl.message('Night', name: 'night', desc: '', args: []);
   }
+
+  /// `Family of {patientName}`
+  String familyOfPatientName(Object patientName) {
+    return Intl.message(
+      'Family of $patientName',
+      name: 'familyOfPatientName',
+      desc: '',
+      args: [patientName],
+    );
+  }
+
+  /// `Select a family circle`
+  String get selectFamilyCircle {
+    return Intl.message(
+      'Select a family circle',
+      name: 'selectFamilyCircle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Family circles`
+  String get familyCircles {
+    return Intl.message(
+      'Family circles',
+      name: 'familyCircles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add family circle`
+  String get addFamilyCircle {
+    return Intl.message(
+      'Add family circle',
+      name: 'addFamilyCircle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add other family circle`
+  String get addOtherFamilyCircle {
+    return Intl.message(
+      'Add other family circle',
+      name: 'addOtherFamilyCircle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you want to create a new family circle or join an existing one?`
+  String get addFamilyCircleDecision {
+    return Intl.message(
+      'Do you want to create a new family circle or join an existing one?',
+      name: 'addFamilyCircleDecision',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit family circle`
+  String get editFamilyCircle {
+    return Intl.message(
+      'Edit family circle',
+      name: 'editFamilyCircle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message('Save', name: 'save', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
 import 'package:lopako_app_lis/features/auth/controllers/auth_controller.dart';
 import 'package:lopako_app_lis/features/auth/models/user_model.dart';
-import 'package:lopako_app_lis/features/family_circles/screens/edit_family_circle_screen.dart';
 import 'package:lopako_app_lis/features/family_circles/screens/new_family_circle_screen.dart';
 import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
@@ -147,31 +146,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ...familyCircles.map((circle) {
                         return FamilyCircleItem(
                           familyCircle: circle,
-                          onTap: () async {
-                            await Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => EditFamilyCircleScreen(
-                                familyCircle: circle,
-                                onSave: (updatedCircle) {
-                                  Navigator.pop(context);
-                                  setState(() {
-                                    familyCircles[familyCircles.indexOf(circle)] = updatedCircle;
-                                  });
-                                },
-                              ),
-                            ));
-                          },
                         );
                       }),
                       SettingsItem(
                         title: localizations.addFamilyCircle,
-                        onTap: () async {
-                          await Navigator.push(
+                        onTap: () {
+                          Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const NewFamilyCircleScreen()),
                           );
-                          setState(() {
-                            _fetchFamilyCircles();
-                          });
                         },
                       ),
                       const SizedBox(height: 32),

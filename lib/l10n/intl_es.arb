@@ -69,5 +69,13 @@
   "tomorrow": "Mañana",
   "morning": "Mañana",
   "afternoon": "Tarde",
-  "night": "Noche"
+  "night": "Noche",
+  "familyOfPatientName": "Familia de {patientName}",
+  "selectFamilyCircle": "Seleccionar un círculo familiar",
+  "familyCircles": "Círculos familiares",
+  "addFamilyCircle": "Añadir círculo familiar",
+  "addOtherFamilyCircle": "Añade otro círculo familiar",
+  "addFamilyCircleDecision": "¿Quieres crear un nuevo círculo familiar o unirte a uno existente?",
+  "editFamilyCircle": "Editar círculo familiar",
+  "save": "Guardar"
 }

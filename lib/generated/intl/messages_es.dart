@@ -20,8 +20,19 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'es';
 
+  static String m0(patientName) => "Familia de ${patientName}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "addFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Añadir círculo familiar",
+    ),
+    "addFamilyCircleDecision": MessageLookupByLibrary.simpleMessage(
+      "¿Quieres crear un nuevo círculo familiar o unirte a uno existente?",
+    ),
+    "addOtherFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Añade otro círculo familiar",
+    ),
     "addRoutine": MessageLookupByLibrary.simpleMessage("Agregar rutina"),
     "afternoon": MessageLookupByLibrary.simpleMessage("Tarde"),
     "age": MessageLookupByLibrary.simpleMessage("Edad"),
@@ -52,6 +63,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "discoverRoutines": MessageLookupByLibrary.simpleMessage(
       "Descubrir rutinas",
     ),
+    "editFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Editar círculo familiar",
+    ),
     "editProfile": MessageLookupByLibrary.simpleMessage("Editar Perfil"),
     "editRoutines": MessageLookupByLibrary.simpleMessage("Editar Rutinas"),
     "email": MessageLookupByLibrary.simpleMessage("Correo electrónico"),
@@ -64,7 +78,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "familyCircleCreated": MessageLookupByLibrary.simpleMessage(
       "¡Círculo familiar creado!",
     ),
+    "familyCircles": MessageLookupByLibrary.simpleMessage(
+      "Círculos familiares",
+    ),
     "familyOf": MessageLookupByLibrary.simpleMessage("Familia de"),
+    "familyOfPatientName": m0,
     "finish": MessageLookupByLibrary.simpleMessage("Finalizar"),
     "firstFamilyCircleSubtitle": MessageLookupByLibrary.simpleMessage(
       "¡Ya casi estamos! Solo un paso más...",
@@ -130,10 +148,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "routinesUpdated": MessageLookupByLibrary.simpleMessage(
       "Rutinas actualizadas exitosamente",
     ),
+    "save": MessageLookupByLibrary.simpleMessage("Guardar"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Guardar Cambios"),
     "search": MessageLookupByLibrary.simpleMessage("Buscar"),
     "selectAtLeastOneOption": MessageLookupByLibrary.simpleMessage(
       "Selecciona al menos una opción.",
+    ),
+    "selectFamilyCircle": MessageLookupByLibrary.simpleMessage(
+      "Seleccionar un círculo familiar",
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
     "shareFamilyCirclePinDescription": MessageLookupByLibrary.simpleMessage(
