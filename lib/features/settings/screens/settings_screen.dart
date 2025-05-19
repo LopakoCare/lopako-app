@@ -5,6 +5,7 @@ import 'package:lopako_app_lis/generated/l10n.dart';
 import 'package:provider/provider.dart';
 import '../../auth/controllers/auth_controller.dart';
 import 'edit_profile_screen.dart';
+import 'reminder_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -20,9 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final authController = Provider.of<AuthController>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.settings),
-      ),
+      appBar: AppBar(title: Text(localizations.settings)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -36,7 +35,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const EditProfileScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.notifications_active_outlined),
+                title: const Text('Recordatorio diario'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ReminderScreen(),
+                    ),
                   );
                 },
               ),
@@ -50,8 +66,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
               child: Text(localizations.logout),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.danger
-              )
+                backgroundColor: AppColors.danger,
+              ),
             ),
           ],
         ),

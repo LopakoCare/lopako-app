@@ -8,13 +8,18 @@ import 'core/services/service_manager.dart';
 import 'core/models/firebase_options.dart';
 import 'app.dart';
 import 'core/services/user_service.dart';
+import 'core/services/notification_service.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Inicializar zonas horarias para notificaciones programadas
+  tz_data.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Europe/Paris'));
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await SharedPreferences.getInstance();
 
@@ -23,6 +28,10 @@ Future<void> main() async {
   sm.add('user', UserService());
   sm.add('familyCircles', FamilyCirclesService());
   sm.add('routines', RoutinesService());
+
+  final notificationService = NotificationService();
+  sm.add('notification', notificationService);
+  await notificationService.initialize();
 
   runApp(const MyApp());
 }

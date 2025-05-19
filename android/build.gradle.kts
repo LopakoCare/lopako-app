@@ -19,3 +19,11 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
+subprojects {
+    if (name.contains("flutter_native_timezone")) {
+        extensions.findByType<com.android.build.gradle.LibraryExtension>()?.apply {
+            namespace = "com.crazecoder.flutter_native_timezone"
+        }
+    }
+}
