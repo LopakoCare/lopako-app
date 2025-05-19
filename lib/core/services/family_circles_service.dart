@@ -27,28 +27,34 @@ class FamilyCirclesService extends BaseService {
     {
       'id': 'relation',
       'type': 'user',
-      'description': '¿Cuál es tu relación con el paciente?',
+      'description': '¿Cuál es tu vínculo con la persona?',
       'required': true,
       'options': [
         {
           'value': 'family',
           'icon': 'heart',
           'label': 'Familiar',
-          'description': 'Pertenece a tu familia, ya sea de forma cercana como indirecta.',
+          'description': 'Pertenece a tu familia, de forma cercana o indirecta',
         },
         {
           'value': 'caregiver',
           'icon': 'girl',
           'label': 'Cuidador/a',
-          'description': 'Eres voluntario o te encargas del cuidado del paciente para su bienestar.'
-        }
+          'description': 'Soy quien le cuida principalmente'
+        },
+        {
+          'value': 'companion',
+          'icon': 'chat-bubbles',
+          'label': 'Acompañante o voluntario',
+          'description': 'Le acompaño de forma puntual o compartida'
+        },
       ]
     },
     {
       'id': 'age',
       'type': 'patient',
       'description': '¿Qué edad tiene el paciente?',
-      'required': true,
+      'required': false,
       'options': [
         {
           'value': '<40',
@@ -91,8 +97,70 @@ class FamilyCirclesService extends BaseService {
           'label': 'Ocasionalmente',
         }
       ]
+    },
+    {
+      'id': 'concerns',
+      'type': 'user',
+      'multiple': true,
+      'required': false,
+      'description': '¿Qué te preocupa?',
+      'options': [
+        {
+          'value': 'cognitive-decline',
+          'icon': 'puzzle',
+          'label': 'Su mente está cambiando'
+        },
+        {
+          'value': 'emotional-distance',
+          'icon': 'chat-bubbles',
+          'label': 'Estamos perdiendo la conexión'
+        },
+        {
+          'value': 'overload',
+          'icon': 'heart',
+          'label': 'Todo recae en mí'
+        },
+        {
+          'value': 'emotional-management',
+          'icon': 'fire',
+          'label': 'Me cuesta gestionar emociones'
+        },
+        {
+          'value': 'loneliness',
+          'icon': 'explorer',
+          'label': 'Me siento solo/a'
+        },
+        {
+          'value': 'loss-of-joy',
+          'icon': 'notify-heart',
+          'label': 'Ya no disfrutamos juntos'
+        }
+      ]
+    },
+    {
+      'id': 'dependency-level',
+      'type': 'user',
+      'required': false,
+      'description': '¿Cuánto apoyo necesita la persona que cuidas?',
+      'options': [
+        {
+          'value': 'autonomous',
+          'label': 'Bastante autónomo/a',
+          'description': 'Hace cosas solo/a, pero olvida detalles'
+        },
+        {
+          'value': 'partial-support',
+          'label': 'Ayuda en algunas tareas',
+          'description': 'Se desorienta o necesita guía'
+        },
+        {
+          'value': 'high-dependency',
+          'label': 'Depende mucho de mí',
+          'description': 'Olvida rutinas y se frustra solo/a'
+        }
+      ]
     }
-  ];
+];
 
   FamilyCirclesService() {
     _initCache();
