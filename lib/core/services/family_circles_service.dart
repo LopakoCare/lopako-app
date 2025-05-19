@@ -83,4 +83,57 @@ class FamilyCirclesService extends BaseService {
     } while (exists);
     return pin;
   }
+
+  /* ───── Añadir rutina a círculo familiar ───── */
+  Future<String> anadirRutinaAFamilia(DocumentReference rutinaRef) async {
+    final auth = serviceManager.getService<AuthService>('auth');
+    final uid = auth.currentUser!.uid;
+
+    // Buscar círculo del usuario
+    final q = await _db
+        .collection('familyCircles')
+        .where('members', arrayContains: uid)
+        .limit(1)
+        .get();
+
+    if (q.docs.isEmpty) return 'No perteneces a ningún círculo familiar';
+
+    final docRef = q.docs.first.reference;
+    final docData = q.docs.first.data();
+
+    List<dynamic> actuales = docData['associated_routines'] ?? [];
+
+    if (actuales.length >= 3) return 'Ya hay 3 rutinas asociadas.';
+
+    final yaExiste = actuales.any((ref) => ref is DocumentReference && ref.id == rutinaRef.id);
+    if (yaExiste) return 'Esta rutina ya está añadida.';
+
+    await docRef.set({
+      'associated_routines': FieldValue.arrayUnion([rutinaRef])
+    }, SetOptions(merge: true));
+
+    return 'Rutina añadida correctamente';
+  }
+
+/* ───── Eliminar rutina de círculo familiar ───── */
+  Future<String> completarRutinaYEliminar(DocumentReference rutinaRef) async {
+    final auth = serviceManager.getService<AuthService>('auth');
+    final uid = auth.currentUser!.uid;
+
+    final q = await _db
+        .collection('familyCircles')
+        .where('members', arrayContains: uid)
+        .limit(1)
+        .get();
+
+    if (q.docs.isEmpty) return 'No perteneces a ningún círculo familiar';
+
+    final docRef = q.docs.first.reference;
+    await docRef.update({
+      'associated_routines': FieldValue.arrayRemove([rutinaRef])
+    });
+
+    return 'Rutina marcada como completada';
+  }
+
 }

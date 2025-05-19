@@ -4,21 +4,26 @@ import 'package:lopako_app_lis/features/routines/controllers/routines_controller
 import 'package:lopako_app_lis/features/routines/screens/routine_details_page.dart';
 
 class RoutinesPage extends StatefulWidget {
-  const RoutinesPage({Key? key}) : super(key: key);
+  final RoutinesController controller;
+
+  const RoutinesPage({Key? key, required this.controller}) : super(key: key);
 
   @override
   State<RoutinesPage> createState() => _RoutinesPageState();
 }
 
 class _RoutinesPageState extends State<RoutinesPage> {
-  final RoutinesController _controller = RoutinesController();
   final TextEditingController _searchController = TextEditingController();
   Set<String> _categoriasSeleccionadas = {};
+  List<Map<String, dynamic>> _rutinas = [];
+  bool _isLoading = true;
+  String _error = '';
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    _loadAllRoutines();
   }
 
   @override
@@ -27,13 +32,47 @@ class _RoutinesPageState extends State<RoutinesPage> {
     super.dispose();
   }
 
+  Future<void> _loadAllRoutines() async {
+    setState(() {
+      _isLoading = true;
+      _error = '';
+    });
+    try {
+      final rutinas = await widget.controller.obtenerTodasLasRutinas();
+      setState(() {
+        _rutinas = rutinas;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Error al cargar rutinas: $e';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   void _onSearchChanged() {
-    setState(() {}); // Para que se actualice al escribir
+    setState(() {}); // Solo para forzar rebuild
   }
 
   @override
   Widget build(BuildContext context) {
-    final rutinasRef = FirebaseFirestore.instance.collection('routines');
+    final query = _searchController.text.toLowerCase();
+
+    final filteredRutinas = _rutinas.where((data) {
+      final title = (data['title'] ?? '').toString().toLowerCase();
+      if (query.isNotEmpty && !title.contains(query)) {
+        return false;
+      }
+      final categorias = data['categories'] as Map<String, dynamic>?;
+      if (_categoriasSeleccionadas.isEmpty) {
+        return true;
+      }
+      if (categorias == null) return false;
+      return _categoriasSeleccionadas.every((cat) => categorias.keys.contains(cat));
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -55,139 +94,46 @@ class _RoutinesPageState extends State<RoutinesPage> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          _buildCategoryFilters(),
-          Expanded(child: _buildRutinasList(rutinasRef)),
-        ],
-      ),
-    );
-  }
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error.isNotEmpty
+          ? Center(child: Text(_error))
+          : filteredRutinas.isEmpty
+          ? const Center(child: Text('No hay rutinas que coincidan.'))
+          : ListView.builder(
+        itemCount: filteredRutinas.length,
+        itemBuilder: (context, index) {
+          final rutinaData = filteredRutinas[index];
+          final rutinaRef = rutinaData['__ref__'] as DocumentReference;
+          final categorias = rutinaData['categories'] as Map<String, dynamic>? ?? {};
 
-  Widget _buildCategoryFilters() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('categories').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Padding(padding: EdgeInsets.all(8), child: CircularProgressIndicator());
-
-        final categoriesDocs = snapshot.data!.docs;
-        if (categoriesDocs.isEmpty) return const SizedBox();
-
-        return Container(
-          color: Colors.grey[200],
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: categoriesDocs.map((doc) {
-                final data = doc.data() as Map<String, dynamic>;
-                final categoryName = data['name'] ?? 'Sin nombre';
-                final isSelected = _categoriasSeleccionadas.contains(categoryName);
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: FilterChip(
-                    label: Text(categoryName),
-                    selected: isSelected,
-                    selectedColor: Colors.purple[200],
-                    showCheckmark: false,
-                    onSelected: (selected) {
-                      setState(() {
-                        if (selected) {
-                          _categoriasSeleccionadas.add(categoryName);
-                        } else {
-                          _categoriasSeleccionadas.remove(categoryName);
-                        }
-                      });
-                    },
-                  ),
-                );
+          return ListTile(
+            title: Text(rutinaData['title'] ?? 'Sin título', style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: categorias.isNotEmpty
+                ? Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: categorias.entries.map((entry) {
+                return Chip(label: Text('${entry.key} ${entry.value}'));
               }).toList(),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildRutinasList(CollectionReference rutinasRef) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: rutinasRef.snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-
-        final rutinasDocs = snapshot.data?.docs ?? [];
-        if (rutinasDocs.isEmpty) {
-          return const Center(child: Text('No hay rutinas disponibles.'));
-        }
-
-        final filteredRutinas = rutinasDocs.where((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          final categorias = data['categories'] as Map<String, dynamic>?;
-          final title = (data['title'] ?? '').toString().toLowerCase();
-          final query = _searchController.text.toLowerCase();
-
-          if (query.isNotEmpty && !title.contains(query)) {
-            return false;
-          }
-
-          if (_categoriasSeleccionadas.isEmpty) {
-            return true;
-          }
-          if (categorias == null) return false;
-
-          return _categoriasSeleccionadas.every((cat) => categorias.keys.contains(cat));
-        }).toList();
-
-        if (filteredRutinas.isEmpty) {
-          return const Center(child: Text('No hay rutinas que coincidan con la búsqueda o filtros.'));
-        }
-
-        return ListView.builder(
-          itemCount: filteredRutinas.length,
-          itemBuilder: (context, index) {
-            final rutinaDoc = filteredRutinas[index];
-            final rutinaData = rutinaDoc.data() as Map<String, dynamic>;
-            final rutinaRef = rutinaDoc.reference;
-
-            final categorias = rutinaData['categories'] as Map<String, dynamic>? ?? {};
-
-            return ListTile(
-              title: Text(rutinaData['title'] ?? 'Sin título', style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: categorias.isNotEmpty
-                  ? Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: categorias.entries.map((entry) {
-                  final nombreCategoria = entry.key;
-                  final valorCategoria = entry.value;
-                  return Chip(
-                    label: Text('$nombreCategoria $valorCategoria'),
-                  );
-                }).toList(),
-              )
-                  : null,
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RoutineDetailsPage(
-                      rutinaRef: rutinaRef,
-                      rutinaData: rutinaData,
-                    ),
+            )
+                : null,
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RoutineDetailsPage(
+                    rutinaRef: rutinaRef,
+                    rutinaData: rutinaData,
+                    controller: widget.controller,
                   ),
-                );
-              },
-            );
-          },
-        );
-      },
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

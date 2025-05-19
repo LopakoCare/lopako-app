@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/services/auth_service.dart';
 import 'core/services/family_circles_service.dart';
+import 'core/services/routines_service.dart';
 import 'core/services/service_manager.dart';
 import 'core/models/firebase_options.dart';
 import 'app.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
   sm.add('auth', AuthService());
   sm.add('user', UserService());
   sm.add('familyCircles', FamilyCirclesService());
+  sm.add('routines', RoutinesService());
 
   runApp(const MyApp());
 }

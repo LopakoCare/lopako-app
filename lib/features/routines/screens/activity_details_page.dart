@@ -9,7 +9,7 @@ class ActivityDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalles de la actividad'),
+        title: const Text('Detalles de la actividad'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -21,11 +21,9 @@ class ActivityDetailsPage extends StatelessWidget {
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            if (actividad['description'] != null)
-              Text(actividad['description']),
+            if (actividad['description'] != null) Text(actividad['description']),
             const SizedBox(height: 12),
-            if (actividad['tipo'] != null)
-              Text('Tipo: ${actividad['tipo']}'),
+            if (actividad['tipo'] != null) Text('Tipo: ${actividad['tipo']}'),
             const SizedBox(height: 8),
             if (actividad['icono'] != null)
               Padding(
@@ -37,14 +35,11 @@ class ActivityDetailsPage extends StatelessWidget {
                 ),
               ),
             const SizedBox(height: 12),
-            if (actividad['enlaces'] != null)
-              Text('Enlaces: ${actividad['enlaces']}'),
+            if (actividad['enlaces'] != null) Text('Enlaces: ${actividad['enlaces']}'),
             const SizedBox(height: 8),
-            if (actividad['audios'] != null)
-              Text('Audios: ${actividad['audios']}'),
+            if (actividad['audios'] != null) Text('Audios: ${actividad['audios']}'),
             const SizedBox(height: 8),
-            if (actividad['imagenes'] != null)
-              Text('Imágenes: ${actividad['imagenes']}'),
+            if (actividad['imagenes'] != null) Text('Imágenes: ${actividad['imagenes']}'),
           ],
         ),
       ),

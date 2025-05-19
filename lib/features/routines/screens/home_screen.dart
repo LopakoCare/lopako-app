@@ -1,150 +1,155 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lopako_app_lis/generated/l10n.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lopako_app_lis/features/routines/screens/activities_page.dart';
 import 'package:lopako_app_lis/features/routines/screens/discover_routines_page.dart';
-import 'package:lopako_app_lis/features/routines/screens/routine_details_page.dart';
-import 'package:lopako_app_lis/features/familiar_circles/controllers/familiar_circles_controllers.dart';
 import 'package:lopako_app_lis/features/routines/controllers/routines_controller.dart';
+// 🔄 Necesitas estos imports para el ServiceManager y services
+import 'package:lopako_app_lis/core/services/service_manager.dart';
+import 'package:lopako_app_lis/core/services/routines_service.dart';
+import 'package:lopako_app_lis/core/services/family_circles_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final FamiliarRoutinesController _controller = FamiliarRoutinesController();
-  final RoutinesController _routinesController = RoutinesController();
+  // 🔄 Ahora el controller se declara e inicializa dentro del estado
+  late final RoutinesController _controller;
+
   late Future<List<Map<String, dynamic>>> _rutinasFuturas;
 
   @override
   void initState() {
     super.initState();
-    _rutinasFuturas = _initializeRutinas();
-  }
-
-  Future<List<Map<String, dynamic>>> _initializeRutinas() async {
-    try {
-      return await _controller.cargarRutinasAsignadas();
-    } catch (e) {
-      return [];
-    }
+    _controller = RoutinesController(
+      ServiceManager.instance.getService<RoutinesService>('routines'),
+      ServiceManager.instance.getService<FamilyCirclesService>('familyCircles'),
+    );
+    _rutinasFuturas = _controller.obtenerTodasLasRutinas();
   }
 
   void _actualizarRutinas() {
     setState(() {
-      _rutinasFuturas = _initializeRutinas();
+      _rutinasFuturas = _controller.obtenerTodasLasRutinas();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final localizations = S.of(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.home),
-      ),
+      appBar: AppBar(title: const Text('Home')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _rutinasFuturas,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error al cargar las rutinas: ${snapshot.error}'),
-            );
-          }
+            if (snapshot.hasError) {
+              print('❌ Error: ${snapshot.error}');
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
 
-          final rutinas = snapshot.data ?? [];
+            final rutinas = snapshot.data ?? [];
+            print('✅ Rutinas cargadas: ${rutinas.length}');
+            if (rutinas.isEmpty) {
+              return const Center(child: Text('No hay rutinas disponibles.'));
+            }
 
-          if (rutinas.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(localizations.world),
-                  ElevatedButton(
-                    onPressed: _actualizarRutinas,
-                    child: const Text('Recargar rutinas'),
+            // 🔄 Vista simplificada SOLO para test: lista de títulos
+            return ListView(
+              children: rutinas.map((rutina) {
+                final title = rutina['title'] ?? 'Sin título';
+                final category = rutina['category'] as Map<String, dynamic>? ?? {};
+                final secondary = rutina['secondary_categories'] as Map<String, dynamic>? ?? {};
+                final ref = rutina['__ref__'];
+
+                // ⚠ Validación para evitar errores si falta __ref__
+                if (ref == null || ref is! DocumentReference) {
+                  return const SizedBox(); // o muestra una tarjeta inválida
+                }
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ActivitiesPage(
+                            rutina: rutina,
+                            controller: _controller,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+
+                          if (category.isNotEmpty)
+                            Wrap(
+                              spacing: 8,
+                              children: category.entries.map((entry) {
+                                return Chip(label: Text('${entry.key}: ${entry.value}'));
+                              }).toList(),
+                            ),
+
+                          if (secondary.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Wrap(
+                                spacing: 8,
+                                children: secondary.entries.map((entry) {
+                                  return Chip(label: Text('${entry.key}: ${entry.value}'));
+                                }).toList(),
+                              ),
+                            ),
+
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () async {
+                                final mensaje = await _controller.completarRutinaYEliminar(ref);
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensaje)));
+                                _actualizarRutinas();
+                              },
+                              child: const Text('Completar', style: TextStyle(color: Colors.green)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ],
-              ),
+                );
+              }).toList(),
             );
           }
 
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              const Text(
-                'Tus rutinas asignadas:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              ...rutinas.map((rutina) => _buildRutinaCard(rutina)).toList(),
-            ],
-          );
-        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const RoutinesPage()),
+            MaterialPageRoute(
+              builder: (_) => RoutinesPage(controller: _controller), // 🔄 Pasamos el controller interno a la otra vista
+            ),
           );
           _actualizarRutinas();
         },
-        backgroundColor: Colors.purple,
         child: const Icon(Icons.search),
       ),
     );
   }
-
-  Widget _buildRutinaCard(Map<String, dynamic> rutina) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        title: Text(rutina['title'] ?? 'Sin título'),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ActivitiesPage(rutina: rutina),
-            ),
-          );
-        },
-        trailing: TextButton(
-          onPressed: () async {
-            final docRef = rutina['__ref__'] as DocumentReference?;
-            if (docRef != null) {
-              try {
-                final mensaje = await _routinesController.completarRutinaYEliminar(docRef);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(mensaje)),
-                );
-                _actualizarRutinas();
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error: $e')),
-                );
-              }
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('No se pudo completar la rutina.')),
-              );
-            }
-          },
-          child: const Text(
-            'Completar',
-            style: TextStyle(color: Colors.green),
-          ),
-        ),
-      ),
-    );
-  }
 }
-
