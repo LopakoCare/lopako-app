@@ -73,31 +73,28 @@ class FamilyCirclesController extends ChangeNotifier {
     } else if (period == 'afternoon') {
       date = date.add(const Duration(hours: 12));
     }
-    try {
-      await _familyCirclesService.addRoutine(routine, date);
-    } catch (e) {
-      throw Exception('No se ha podido añadir la rutina. Por favor, inténtelo de nuevo.');
-    }
+    await _familyCirclesService.addRoutine(routine, startsAt: date);
   }
 
   /// Start a routine for the family circle.
   Future<void> startRoutine(Routine routine) async {
     AuthService authService = ServiceManager.instance.getService('auth') as AuthService;
     assert(authService.isLogged(), 'User must be logged in to create a family circle');
-    try {
-      await _familyCirclesService.startRoutine(routine);
-    } catch (e) {
-      throw Exception('No se ha podido iniciar la rutina. Por favor, inténtelo de nuevo.');
-    }
+    await _familyCirclesService.startRoutine(routine);
+  }
+
+  /// Finish a routine for the family circle.
+  Future<FamilyCircle> finishFamilyCircleRoutine(FamilyCircle familyCircle) async {
+    return await _familyCirclesService.finishRoutine(familyCircle);
   }
 
   /// Get the current family circle.
-  Future<FamilyCircle?> getCurrentFamilyCircle() async {
+  Future<FamilyCircle?> getCurrentFamilyCircle({bool forceRefresh = false}) async {
     AuthService authService = ServiceManager.instance.getService('auth') as AuthService;
     assert(authService.isLogged(), 'User must be logged in to create a family circle');
     FamilyCircle? circle;
     try {
-      circle = await _familyCirclesService.getCurrentFamilyCircle();
+      circle = await _familyCirclesService.getCurrentFamilyCircle(forceRefresh: forceRefresh);
     } catch (e) {
       throw Exception('No se ha podido obtener el círculo familiar. Por favor, inténtelo de nuevo.');
     }
@@ -119,11 +116,11 @@ class FamilyCirclesController extends ChangeNotifier {
   }
 
   /// Switch the current family circle to the one with the given [id].
-  Future<void> switchFamilyCircle(FamilyCircle familyCircle) async {
+  Future<FamilyCircle> switchFamilyCircle(FamilyCircle familyCircle) async {
     AuthService authService = ServiceManager.instance.getService('auth') as AuthService;
     assert(authService.isLogged(), 'User must be logged in to create a family circle');
     try {
-      await _familyCirclesService.switchFamilyCircle(familyCircle);
+      return await _familyCirclesService.switchFamilyCircle(familyCircle);
     } catch (e) {
       throw Exception('No se ha podido cambiar el círculo familiar. Por favor, inténtelo de nuevo.');
     }

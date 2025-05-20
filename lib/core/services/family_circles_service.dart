@@ -1,20 +1,17 @@
-import 'dart:convert';
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:lopako_app_lis/core/services/routines_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:lopako_app_lis/core/services/routines_service.dart';
 import 'package:lopako_app_lis/core/services/user_service.dart';
 import 'package:lopako_app_lis/features/routines/models/routine_model.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
-
 import 'service_manager.dart';
 import 'auth_service.dart';
 
-const _kCacheKey = 'current_family_circle';
 
 class FamilyCirclesService extends BaseService {
+  static const _kPrefCurrentCircleId = 'current_circle_id';
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final Random _rand = Random();
 
@@ -163,27 +160,20 @@ class FamilyCirclesService extends BaseService {
 ];
 
   FamilyCirclesService() {
-    _initCache();
+    _loadPersistedCurrentCircle();
   }
 
-  /// Inicializa caché desde SharedPreferences
-  Future<void> _initCache() async {
+  Future<void> _loadPersistedCurrentCircle() async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString(_kCacheKey);
-    if (jsonString == null) return;
-
-    try {
-      _current = FamilyCircle.fromJson(json.decode(jsonString));
-    } catch (_) {
-      await prefs.remove(_kCacheKey);
+    final id = prefs.getString(_kPrefCurrentCircleId);
+    if (id != null) {
+      try {
+        _current = await _loadCircleFromFirestore(id);
+      } catch (_) {
+        await prefs.remove(_kPrefCurrentCircleId);
+        _current = null;
+      }
     }
-  }
-
-  /// Guarda en caché local y memoria
-  Future<void> _saveToCache(FamilyCircle circle) async {
-    _current = circle;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kCacheKey, json.encode(circle.toJson()));
   }
 
   /// Crea un nuevo FamilyCircle y lo cachea
@@ -203,7 +193,6 @@ class FamilyCirclesService extends BaseService {
     });
 
     final circle = await _loadCircleFromFirestore(docRef.id);
-    await _saveToCache(circle);
     return circle;
   }
 
@@ -228,7 +217,6 @@ class FamilyCirclesService extends BaseService {
     });
 
     final circle = await _loadCircleFromFirestore(doc.id);
-    await _saveToCache(circle);
     return circle;
   }
 
@@ -240,7 +228,7 @@ class FamilyCirclesService extends BaseService {
       'members': familyCircle.members.map((m) => m.id).toList(),
     });
     final updatedCircle = await _loadCircleFromFirestore(familyCircle.id);
-    await _saveToCache(updatedCircle);
+    _current = updatedCircle;
     return updatedCircle;
   }
 
@@ -254,39 +242,36 @@ class FamilyCirclesService extends BaseService {
   /// Recupera todos los círculos familiares del usuario
   Future<List<FamilyCircle>> getUserFamilyCircles(String uid) async {
     final query = await _db
-        .collection('family_circles')
-        .where('members', arrayContains: uid)
-        .get();
-    return Future.wait(query.docs.map((doc) => _loadCircleFromFirestore(doc.id)));
+      .collection('family_circles')
+      .where('members', arrayContains: uid)
+      .get();
+    return Future.wait(
+        query.docs.map((doc) =>
+            _loadCircleFromFirestore(doc.id)
+        )
+    );
   }
 
   /// Cambia el círculo actual (desde Ajustes)
-  Future<void> switchFamilyCircle(FamilyCircle familyCircle) async {
+  Future<FamilyCircle> switchFamilyCircle(FamilyCircle familyCircle) async {
     final circle = await getFamilyCircle(familyCircle.id);
     if (circle == null) throw Exception('Círculo no existe');
-    await _saveToCache(circle);
+    _current = circle;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kPrefCurrentCircleId, circle.id);
+    return circle;
   }
 
-  /// Obtener círculo actual (cache o forzando refresh)
+  /// Obtener círculo actual
   Future<FamilyCircle?> getCurrentFamilyCircle({bool forceRefresh = false}) async {
-    if (!forceRefresh && _current != null) {
-      return _current;
+    if (_current == null && forceRefresh) {
+      await _loadPersistedCurrentCircle();
     }
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString(_kCacheKey);
-    if (jsonString == null) {
-      return null;
-    }
-    final cached = FamilyCircle.fromJson(json.decode(jsonString));
-    if (!forceRefresh) {
-      _current = cached;
-      return _current;
-    }
-    return await getFamilyCircle(cached.id);
+    return _current;
   }
 
   /// Añade una rutina al círculo actual (usa getCurrentCircle(forceRefresh: true))
-  Future<void> addRoutine(Routine routine, DateTime? startsAt) async {
+  Future<FamilyCircle> addRoutine(Routine routine, {DateTime? startsAt}) async {
     final circle = await getCurrentFamilyCircle(forceRefresh: true);
     if (circle == null) throw Exception('Círculo familiar no encontrado');
     if (circle.routines.any((r) => r.id == routine.id)) {
@@ -303,39 +288,50 @@ class FamilyCirclesService extends BaseService {
     await _db.collection('family_circles').doc(circle.id).update({
       'routines': FieldValue.arrayUnion([data]),
     });
-    final updatedCircle = await getFamilyCircle(circle.id);
-    if (updatedCircle == null) {
-      throw Exception('Error al actualizar el círculo familiar');
-    }
-    await _saveToCache(updatedCircle);
+    routine = routine.copyWith(startsAt: startsAt);
+    circle.routines.add(routine);
+    return circle;
   }
 
   /// Inicia una rutina en el círculo actual (usa getCurrentCircle(forceRefresh: true))
-  Future<void> startRoutine(Routine routine) async {
-    final circle = await getCurrentFamilyCircle(forceRefresh: true);
+  Future<FamilyCircle> startRoutine(Routine routine) async {
+    FamilyCircle? circle = await getCurrentFamilyCircle(forceRefresh: true);
     if (circle == null) throw Exception('Círculo familiar no encontrado');
-    if (circle.routines.isEmpty) {
-      throw Exception('No hay rutinas programadas');
-    }
     if (circle.currentRoutine != null) {
-      throw Exception('Ya hay una rutina en curso');
+      throw Exception('Ya hay una rutina activa');
     }
-    final otherRoutines = circle.routines.where((r) => r.id != routine.id).toList();
-    final routines = otherRoutines.map((r) {
-      return {
-        'routineId': r.id,
-        'startsAt': r.startsAt,
-      };
-    }).toList();
+    if (!circle.routines.any((r) => r.id == routine.id)) {
+      circle = await addRoutine(routine);
+    }
     await _db.collection('family_circles').doc(circle.id).update({
       'currentRoutine': routine.id,
+    });
+    circle.currentRoutine = routine;
+    return circle;
+  }
+
+  /// Termina la rutina activa en el círculo actual (usa getCurrentCircle(forceRefresh: true))
+  Future<FamilyCircle> finishRoutine(FamilyCircle familyCircle) async {
+    final circle = await getFamilyCircle(familyCircle.id);
+    if (circle == null) throw Exception('Círculo familiar no encontrado');
+    if (circle.currentRoutine == null) {
+      throw Exception('No hay ninguna rutina activa');
+    }
+    final routine = circle.currentRoutine!;
+    final routines = circle.routines
+        .where((r) => r.id != routine.id)
+        .map((r) =>
+    {
+      'routineId': r.id,
+      'startsAt': r.startsAt?.millisecondsSinceEpoch,
+    });
+    await _db.collection('family_circles').doc(circle.id).update({
+      'currentRoutine': null,
       'routines': routines,
     });
-    final updatedCircle = await getFamilyCircle(circle.id);
-    if (updatedCircle == null) {
-      throw Exception('Error al actualizar el círculo familiar');
-    }
-    await _saveToCache(updatedCircle);
+    circle.currentRoutine = null;
+    circle.routines.removeWhere((r) => r.id == routine.id);
+    return circle;
   }
 
   /* ───── Helpers ───── */
@@ -409,8 +405,8 @@ class FamilyCirclesService extends BaseService {
 
   /// Limpia el caché local
   Future<void> clearCache() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_kCacheKey);
     _current = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kPrefCurrentCircleId);
   }
 }

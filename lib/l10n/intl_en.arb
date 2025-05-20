@@ -85,5 +85,9 @@
   "currentPassword": "Current password",
   "newPassword": "New password",
   "passwordMinLength": "Password must be at least 6 characters.",
-  "confirmPassword": "Confirm password"
+  "confirmPassword": "Confirm password",
+  "noFamilyCirclesYet": "You don't have any family circles yet.",
+  "noRoutinesYet": "You don't have any routines yet.",
+  "beforeStart": "Antes de empezar",
+  "activities": "Actividades"
 }

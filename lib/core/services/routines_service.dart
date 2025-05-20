@@ -18,25 +18,10 @@ class RoutinesService extends BaseService {
   static const _kCategoriesKey         = 'categories_all';
 
   /// Get a routine by its [id]. Use [forceRefresh] to force a refresh from Firestore.
+  /// Get a routine by its ID. Use [forceRefresh] to force a refresh from Firestore.
   Future<Routine?> getRoutine(String id, {bool forceRefresh = false}) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (!forceRefresh) {
-      final cached = prefs.getString('$_kRoutineKeyPrefix$id');
-      if (cached != null) {
-        final jsonMap = json.decode(cached) as Map<String, dynamic>;
-        return Routine.fromJson(jsonMap);
-      }
-    }
-
-    final doc = await _db.collection('routines').doc(id).get();
-    if (!doc.exists) return null;
-    final routine = Routine.fromJson(doc.data()!);
-    prefs.setString(
-      '$_kRoutineKeyPrefix$id',
-      json.encode(routine.toJson()),
-    );
-    return routine;
+    final List<Routine> routines = await getAllRoutines(forceRefresh: forceRefresh);
+    return routines.firstWhere((r) => r.id == id);
   }
 
   /// Get all the routines. Use [forceRefresh] to force a refresh from Firestore.

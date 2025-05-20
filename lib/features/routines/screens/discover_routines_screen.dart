@@ -132,6 +132,7 @@ class _DiscoverRoutinesScreenState extends State<DiscoverRoutinesScreen> {
 
   void _showRoutineDetails(Routine routine) {
     showModalBottomSheet(
+      elevation: 0,
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

@@ -8,6 +8,7 @@ import 'package:lopako_app_lis/features/auth/models/user_model.dart';
 import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../routines/screens/home_screen.dart';
 import '../../calendar/screens/calendar_screen.dart';
 import '../../settings/screens/settings_screen.dart';
@@ -35,52 +36,69 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _fetchFamilyCircles();
-    _fetchCurrentUser();
-    _loadLastTab();
     _tabController = TabController(
       length: 3,
       vsync: this,
       initialIndex: _currentIndex,
-    );
-    _tabController.addListener(_handleTabSelection);
+    )..addListener(_handleTabSelection);
+
+    _fetchFamilyCircles();
+    _fetchCurrentUser();
+    _loadLastTab();
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabSelection);
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadLastTab() async {
-    // TODO: Implementar lógica para cargar la última pestaña
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getInt('last_tab_index') ?? 0;
+    if (!mounted) return;
+    setState(() => _currentIndex = saved);
+    _tabController.index = saved;
   }
 
   Future<void> _fetchFamilyCircles() async {
+    if (!mounted) return;
+    setState(() => _isFamilyCirclesLoading = true);
+
+    final circles = await _familyCirclesController.getFamilyCircles();
+    if (!mounted) return;
     setState(() {
-      _isFamilyCirclesLoading = true;
-    });
-    familyCircles = await _familyCirclesController.getFamilyCircles();
-    setState(() {
+      familyCircles = circles;
       _isFamilyCirclesLoading = false;
     });
   }
 
   Future<void> _fetchCurrentUser() async {
+    if (!mounted) return;
+    setState(() => _isCurrentUserLoading = true);
+
+    final u = await _authController.getUser();
+    if (!mounted) return;
     setState(() {
-      _isCurrentUserLoading = true;
-    });
-    user = await _authController.getUser();
-    setState(() {
+      user = u;
       _isCurrentUserLoading = false;
     });
   }
 
   void _handleTabSelection() {
     if (_tabController.indexIsChanging) {
-      setState(() {
-        _currentIndex = _tabController.index;
-      });
-      _saveSelectedTab(_currentIndex);
+      final newIndex = _tabController.index;
+      if (mounted) {
+        setState(() => _currentIndex = newIndex);
+      }
+      _saveSelectedTab(newIndex);
     }
   }
 
   Future<void> _saveSelectedTab(int index) async {
-    // TODO: Implementar lógica para guardar la pestaña seleccionada
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('last_tab_index', index);
   }
 
   @override

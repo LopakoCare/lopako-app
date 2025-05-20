@@ -93,6 +93,7 @@ flutter:
     - assets/google_fonts/
     - assets/icons/
     - assets/images/
+    - assets/bubbles/
 
 flutter_intl:
   enabled: true

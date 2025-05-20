@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "activities": MessageLookupByLibrary.simpleMessage("Actividades"),
     "addFamilyCircle": MessageLookupByLibrary.simpleMessage(
       "Añadir círculo familiar",
     ),
@@ -43,6 +44,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ha ocurrido un error durante el proceso de autenticación. Por favor, inténtalo de nuevo.",
     ),
     "back": MessageLookupByLibrary.simpleMessage("Volver"),
+    "beforeStart": MessageLookupByLibrary.simpleMessage("Antes de empezar"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendario"),
     "changePassword": MessageLookupByLibrary.simpleMessage(
       "Cambiar contraseña",
@@ -125,8 +127,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newPassword": MessageLookupByLibrary.simpleMessage("Nueva contraseña"),
     "night": MessageLookupByLibrary.simpleMessage("Noche"),
+    "noFamilyCirclesYet": MessageLookupByLibrary.simpleMessage(
+      "Aún no tienes ningún círculo familiar.",
+    ),
     "noRoutinesFound": MessageLookupByLibrary.simpleMessage(
       "No se han encontrado rutinas.",
+    ),
+    "noRoutinesYet": MessageLookupByLibrary.simpleMessage(
+      "Aún no tienes ninguna rutina.",
     ),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "or": MessageLookupByLibrary.simpleMessage("o"),

@@ -96,6 +96,7 @@ class _RoutineDetailSheetState extends State<RoutineDetailSheet> with SingleTick
         _isFormDisabled = false;
       });
     }
+    Navigator.of(context).pop();
   }
 
   Future<void> startRoutine() async {
@@ -116,6 +117,7 @@ class _RoutineDetailSheetState extends State<RoutineDetailSheet> with SingleTick
         _isFormDisabled = false;
       });
     }
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   @override

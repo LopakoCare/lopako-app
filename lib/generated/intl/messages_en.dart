@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "activities": MessageLookupByLibrary.simpleMessage("Actividades"),
     "addFamilyCircle": MessageLookupByLibrary.simpleMessage(
       "Add family circle",
     ),
@@ -41,6 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "An error occurred during authentication process. Please try again.",
     ),
     "back": MessageLookupByLibrary.simpleMessage("Back"),
+    "beforeStart": MessageLookupByLibrary.simpleMessage("Antes de empezar"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change password"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm password"),
@@ -111,8 +113,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "nameRequired": MessageLookupByLibrary.simpleMessage("Name is required."),
     "newPassword": MessageLookupByLibrary.simpleMessage("New password"),
     "night": MessageLookupByLibrary.simpleMessage("Night"),
+    "noFamilyCirclesYet": MessageLookupByLibrary.simpleMessage(
+      "You don\'t have any family circles yet.",
+    ),
     "noRoutinesFound": MessageLookupByLibrary.simpleMessage(
       "No routines found.",
+    ),
+    "noRoutinesYet": MessageLookupByLibrary.simpleMessage(
+      "You don\'t have any routines yet.",
     ),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "or": MessageLookupByLibrary.simpleMessage("or"),

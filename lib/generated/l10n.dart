@@ -749,6 +749,41 @@ class S {
       args: [],
     );
   }
+
+  /// `You don't have any family circles yet.`
+  String get noFamilyCirclesYet {
+    return Intl.message(
+      'You don\'t have any family circles yet.',
+      name: 'noFamilyCirclesYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You don't have any routines yet.`
+  String get noRoutinesYet {
+    return Intl.message(
+      'You don\'t have any routines yet.',
+      name: 'noRoutinesYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Antes de empezar`
+  String get beforeStart {
+    return Intl.message(
+      'Antes de empezar',
+      name: 'beforeStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Actividades`
+  String get activities {
+    return Intl.message('Actividades', name: 'activities', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

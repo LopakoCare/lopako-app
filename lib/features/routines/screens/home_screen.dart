@@ -4,6 +4,8 @@ import 'package:lopako_app_lis/core/constants/app_colors.dart';
 import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 import 'package:lopako_app_lis/features/routines/screens/discover_routines_screen.dart';
+import 'package:lopako_app_lis/features/routines/screens/routine_active_sheet.dart';
+import 'package:lopako_app_lis/features/routines/widgets/home_routines_bubbles_widget.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,6 +20,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   final FamilyCirclesController _familyCirclesController = FamilyCirclesController();
+
+  bool get _lockSheet => _currentFamilyCircle?.currentRoutine != null;
 
   final double _minSheetExtent = 0.2;
   final double _maxSheetExtent = 0.6;
@@ -54,6 +58,12 @@ class _HomeScreenState extends State<HomeScreen> {
       _isFamilyCircleLoading = true;
     });
     _currentFamilyCircle = await _familyCirclesController.getCurrentFamilyCircle();
+    _currentExtent = _lockSheet ? _maxSheetExtent : _minSheetExtent;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_lockSheet && _sheetController.isAttached) {
+        _sheetController.jumpTo(_lockSheet ? _maxSheetExtent : _minSheetExtent);
+      }
+    });
     setState(() {
       _isFamilyCircleLoading = false;
     });
@@ -64,9 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isFamilyCircleLoading = true;
     });
-    await _familyCirclesController.switchFamilyCircle(selected);
+    final updatedCircle = await _familyCirclesController.switchFamilyCircle(selected);
+    _currentFamilyCircle = updatedCircle;
+    _currentExtent = _lockSheet ? _maxSheetExtent : _minSheetExtent;
     setState(() {
-      _currentFamilyCircle = selected;
       _isFamilyCircleLoading = false;
     });
   }
@@ -162,10 +173,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: AppColors.neutral[700],
                       ),
                     ),
-                  const Expanded(
+                  Expanded(
                     child: Center(
-                      child: Text('Hello World',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      child: HomeRoutinesBubbles(
+                        familyCircle: _currentFamilyCircle,
+                        onStartRoutine: (FamilyCircle familyCircle) {
+                          _switchFamilyCircle(familyCircle);
+                        }
+                      ),
                     ),
                   ),
                 ],
@@ -182,6 +197,13 @@ class _HomeScreenState extends State<HomeScreen> {
     double hideLogoProgress = (t - _hideLogoStart) / (_hideLogoEnd - _hideLogoStart);
     hideLogoProgress = hideLogoProgress.clamp(0.0, 1.0);
 
+    final bool locked       = _lockSheet;
+    final double minExtent  = locked ? _maxSheetExtent : _minSheetExtent;
+    final double initExtent = minExtent;
+    final snapList          = locked
+        ? <double>[_maxSheetExtent]
+        : <double>[_minSheetExtent, _maxSheetExtent];
+
     return Scaffold(
       body: Stack(
         children: [
@@ -191,11 +213,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           DraggableScrollableSheet(
             controller: _sheetController,
-            initialChildSize: _minSheetExtent,
-            minChildSize: _minSheetExtent,
+            initialChildSize: initExtent,
+            minChildSize: minExtent,
             maxChildSize: _maxSheetExtent,
             snap: true,
-            snapSizes: [_minSheetExtent, _maxSheetExtent],
+            snapSizes: snapList,
             builder: (context, scrollController) {
               if (!_hasResetScroll) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -218,27 +240,32 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Stack(
                       children: [
                         SingleChildScrollView(
-                            controller: scrollController,
-                            padding: const EdgeInsets.only(top: 16, bottom: 16),
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minHeight: constraints.maxHeight - 32,
-                              ),
-                              child: _isFamilyCircleLoading
-                                ? const Center(child: CircularProgressIndicator())
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Center(
-                                        child: Text("Hello World", style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.neutral[700],
-                                        )),
-                                      ),
-                                    ]
-                                  )
+                          controller: scrollController,
+                          physics: _lockSheet
+                            ? const NeverScrollableScrollPhysics()
+                            : const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.only(top: 16, bottom: 16),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight - 32,
+                              maxHeight: constraints.maxHeight - 32,
                             ),
+                            child: _isFamilyCircleLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : Container(
+                                child: _lockSheet
+                                  ? RoutineActiveSheet(
+                                    familyCircle: _currentFamilyCircle!,
+                                    onComplete: (FamilyCircle familyCircle) {
+                                      _switchFamilyCircle(familyCircle);
+                                      _sheetController.jumpTo(_minSheetExtent);
+                                    },
+                                  )
+                                  : Center(
+                                    child: Text("Hello world!"),
+                                  ),
+                              ),
+                          ),
                         ),
                         // Indicador de arrastre
                         Positioned(
@@ -265,16 +292,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isFamilyCircleLoading
-          ? null
-          : () {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => const DiscoverRoutinesScreen(),
-            ));
-          },
-        child: FaIcon(FontAwesomeIcons.magnifyingGlass),
-      )
+      floatingActionButton: _lockSheet
+        ? null
+        : FloatingActionButton(
+          onPressed: _isFamilyCircleLoading
+            ? null
+            : () async {
+              await Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const DiscoverRoutinesScreen(),
+              ));
+              _switchFamilyCircle(_currentFamilyCircle);
+            },
+          child: FaIcon(FontAwesomeIcons.magnifyingGlass),
+        ),
     );
   }
 }
