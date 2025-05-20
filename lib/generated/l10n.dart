@@ -674,6 +674,81 @@ class S {
   String get save {
     return Intl.message('Save', name: 'save', desc: '', args: []);
   }
+
+  /// `Members`
+  String get members {
+    return Intl.message('Members', name: 'members', desc: '', args: []);
+  }
+
+  /// `Edit account`
+  String get editAccount {
+    return Intl.message(
+      'Edit account',
+      name: 'editAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Personal information`
+  String get personalInformation {
+    return Intl.message(
+      'Personal information',
+      name: 'personalInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change password`
+  String get changePassword {
+    return Intl.message(
+      'Change password',
+      name: 'changePassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current password`
+  String get currentPassword {
+    return Intl.message(
+      'Current password',
+      name: 'currentPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New password`
+  String get newPassword {
+    return Intl.message(
+      'New password',
+      name: 'newPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password must be at least 6 characters.`
+  String get passwordMinLength {
+    return Intl.message(
+      'Password must be at least 6 characters.',
+      name: 'passwordMinLength',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm password`
+  String get confirmPassword {
+    return Intl.message(
+      'Confirm password',
+      name: 'confirmPassword',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

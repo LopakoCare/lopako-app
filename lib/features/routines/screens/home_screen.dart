@@ -7,7 +7,9 @@ import 'package:lopako_app_lis/features/routines/screens/discover_routines_scree
 import 'package:lopako_app_lis/generated/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final List<FamilyCircle> familyCircles;
+
+  const HomeScreen({super.key, required this.familyCircles});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -30,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _isFamilyCircleLoading = false;
   FamilyCircle? _currentFamilyCircle;
-  List<FamilyCircle> _familyCircles = [];
 
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchFamilyCircles();
+    _fetchCurrentFamilyCircle();
     _sheetController.addListener(_onSheetScroll);
   }
 
@@ -48,11 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<void> _fetchFamilyCircles() async {
+  Future<void> _fetchCurrentFamilyCircle() async {
     setState(() {
       _isFamilyCircleLoading = true;
     });
-    _familyCircles = await _familyCirclesController.getFamilyCircles();
     _currentFamilyCircle = await _familyCirclesController.getCurrentFamilyCircle();
     setState(() {
       _isFamilyCircleLoading = false;
@@ -99,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     FamilyCircle? dropdownValue;
     if (_currentFamilyCircle != null) {
-      dropdownValue = _familyCircles.firstWhere(
+      dropdownValue = widget.familyCircles.firstWhere(
             (fc) => fc.id == _currentFamilyCircle!.id,
-        orElse: () => _familyCircles.first,
+        orElse: () => widget.familyCircles.first,
       );
     }
 
@@ -128,10 +128,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ? const Center(child: CircularProgressIndicator())
               : Column(
                 children: [
-                  if (_familyCircles.length > 1)
+                  if (widget.familyCircles.length > 1)
                     DropdownButton<FamilyCircle>(
                       value: dropdownValue,
-                      items: _familyCircles.map((fc) {
+                      items: widget.familyCircles.map((fc) {
                         return DropdownMenuItem(
                           value: fc,
                           child: Text(localizations.familyOfPatientName(fc.patientName)),
@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       elevation: 0,
                       dropdownColor: AppColors.neutral[50],
                     ),
-                  if (_familyCircles.length <= 1)
+                  if (widget.familyCircles.length <= 1)
                     Text(
                       familyCircleName,
                       style: TextStyle(

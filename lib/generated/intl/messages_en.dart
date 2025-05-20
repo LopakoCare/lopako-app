@@ -42,6 +42,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "back": MessageLookupByLibrary.simpleMessage("Back"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
+    "changePassword": MessageLookupByLibrary.simpleMessage("Change password"),
+    "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm password"),
     "continueWithApple": MessageLookupByLibrary.simpleMessage(
       "Continue with Apple",
     ),
@@ -57,10 +59,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "createFamilyCircle": MessageLookupByLibrary.simpleMessage(
       "Create family circle",
     ),
+    "currentPassword": MessageLookupByLibrary.simpleMessage("Current password"),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "discoverRoutines": MessageLookupByLibrary.simpleMessage(
       "Discover routines",
     ),
+    "editAccount": MessageLookupByLibrary.simpleMessage("Edit account"),
     "editFamilyCircle": MessageLookupByLibrary.simpleMessage(
       "Edit family circle",
     ),
@@ -98,12 +102,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "later": MessageLookupByLibrary.simpleMessage("Later"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "logout": MessageLookupByLibrary.simpleMessage("Log out"),
+    "members": MessageLookupByLibrary.simpleMessage("Members"),
     "missingRequiredAnswers": MessageLookupByLibrary.simpleMessage(
       "Answer required questions",
     ),
     "morning": MessageLookupByLibrary.simpleMessage("Morning"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "nameRequired": MessageLookupByLibrary.simpleMessage("Name is required."),
+    "newPassword": MessageLookupByLibrary.simpleMessage("New password"),
     "night": MessageLookupByLibrary.simpleMessage("Night"),
     "noRoutinesFound": MessageLookupByLibrary.simpleMessage(
       "No routines found.",
@@ -111,6 +117,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "or": MessageLookupByLibrary.simpleMessage("or"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "passwordMinLength": MessageLookupByLibrary.simpleMessage(
+      "Password must be at least 6 characters.",
+    ),
     "passwordRequired": MessageLookupByLibrary.simpleMessage(
       "Password is required.",
     ),
@@ -121,6 +130,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Passwords do not match",
     ),
     "patientName": MessageLookupByLibrary.simpleMessage("Patient name"),
+    "personalInformation": MessageLookupByLibrary.simpleMessage(
+      "Personal information",
+    ),
     "profileUpdateError": MessageLookupByLibrary.simpleMessage(
       "Error updating profile: ",
     ),

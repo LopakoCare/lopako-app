@@ -5,16 +5,19 @@ import 'package:lopako_app_lis/features/auth/controllers/auth_controller.dart';
 import 'package:lopako_app_lis/features/auth/models/user_model.dart';
 import 'package:lopako_app_lis/features/family_circles/screens/edit_family_circle_screen.dart';
 import 'package:lopako_app_lis/features/family_circles/screens/new_family_circle_screen.dart';
-import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
-import 'package:lopako_app_lis/features/settings/screens/edit_profile_screen.dart';
+import 'package:lopako_app_lis/features/settings/screens/edit_account_screen.dart';
 import 'package:lopako_app_lis/features/settings/widgets/family_circle_item_widget.dart';
 import 'package:lopako_app_lis/features/settings/widgets/profile_option_item_widget.dart';
 import 'package:lopako_app_lis/features/settings/widgets/settings_item_widget.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  final AppUser user;
+  final List<FamilyCircle> familyCircles;
+  final void Function(AppUser updatedUser) onUserUpdated;
+
+  const SettingsScreen({super.key, required this.user, required this.familyCircles, required this.onUserUpdated});
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -22,10 +25,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
 
   final AuthController _authController = AuthController();
-  User? user;
-
-  final FamilyCirclesController _familyCirclesController = FamilyCirclesController();
-  List<FamilyCircle> familyCircles = [];
 
   final _scrollCtrl = ScrollController();
   double _topPos = 0;
@@ -38,31 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
-    _fetchFamilyCircles();
     _scrollCtrl.addListener(_onScroll);
-  }
-
-  Future<void> _fetchUserData() async {
-    try {
-      final user = await _authController.getUser();
-      setState(() {
-        this.user = user;
-      });
-    } catch (e) {
-      // Handle error
-    }
-  }
-
-  Future<void> _fetchFamilyCircles() async {
-    try {
-      final circles = await _familyCirclesController.getFamilyCircles();
-      setState(() {
-        familyCircles = circles;
-      });
-    } catch (e) {
-      // Handle error
-    }
   }
 
   @override
@@ -107,13 +82,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ProfileOptionItem(
-                    title: user == null ? localizations.loading : user!.name,
-                    subtitle: user?.email,
+                    title: widget.user.name,
+                    subtitle: widget.user.email,
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-                      );
+                        MaterialPageRoute(builder: (context) => EditAccountScreen(
+                          user: widget.user,
+                          onSave: (newUser) {
+                            widget.onUserUpdated(newUser);
+                          },
+                        ),
+                      ));
                     },
                   ),
                 ]
@@ -144,17 +124,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      ...familyCircles.map((circle) {
+                      ...widget.familyCircles.map((circle) {
                         return FamilyCircleItem(
                           familyCircle: circle,
                           onTap: () async {
                             await Navigator.push(context, MaterialPageRoute(
                               builder: (context) => EditFamilyCircleScreen(
+                                currentUser: widget.user,
                                 familyCircle: circle,
                                 onSave: (updatedCircle) {
                                   Navigator.pop(context);
                                   setState(() {
-                                    familyCircles[familyCircles.indexOf(circle)] = updatedCircle;
+                                    widget.familyCircles[widget.familyCircles.indexOf(circle)] = updatedCircle;
                                   });
                                 },
                               ),
@@ -167,11 +148,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onTap: () async {
                           await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const NewFamilyCircleScreen()),
+                            MaterialPageRoute(builder: (context) => NewFamilyCircleScreen(
+                              onComplete: (newCircle) {
+                                setState(() {
+                                  widget.familyCircles.add(newCircle);
+                                });
+                              },
+                            )),
                           );
-                          setState(() {
-                            _fetchFamilyCircles();
-                          });
                         },
                       ),
                       const SizedBox(height: 32),
@@ -192,6 +176,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (!mounted) return;
                           Navigator.of(context).popUntil((route) => route.isFirst);
                         },
+                        hideArrow: true,
                       ),
                     ],
                   ),

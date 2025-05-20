@@ -77,5 +77,13 @@
   "addOtherFamilyCircle": "Añade otro círculo familiar",
   "addFamilyCircleDecision": "¿Quieres crear un nuevo círculo familiar o unirte a uno existente?",
   "editFamilyCircle": "Editar círculo familiar",
-  "save": "Guardar"
+  "save": "Guardar",
+  "members": "Miembros",
+  "editAccount": "Editar cuenta",
+  "personalInformation": "Información personal",
+  "changePassword": "Cambiar contraseña",
+  "currentPassword": "Contraseña actual",
+  "newPassword": "Nueva contraseña",
+  "passwordMinLength": "La contraseña debe tener al menos 6 caracteres.",
+  "confirmPassword": "Confirmar contraseña"
 }

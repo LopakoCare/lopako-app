@@ -200,8 +200,18 @@ class AuthController extends ChangeNotifier {
   }
 
   // Get user
-  Future<User?> getUser() async {
+  Future<AppUser?> getUser() async {
     final usrSrv = ServiceManager.instance.getService('user') as UserService;
     return await usrSrv.get(uid: _authService.currentUser?.uid);
+  }
+
+  /// Change the [currentPassword] to the [newPassword] for the current user.
+  Future<void> changePassword({required String currentPassword, required String newPassword}) async {
+    await _authService.changePassword(currentPassword: currentPassword, newPassword: newPassword);
+  }
+
+  /// Check if the current user is logged in with a password provider.
+  bool isUsingPassword() {
+    return _state.availableProviders.contains('password');
   }
 }

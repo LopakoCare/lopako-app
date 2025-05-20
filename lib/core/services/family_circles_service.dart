@@ -23,7 +23,7 @@ class FamilyCirclesService extends BaseService {
   FamilyCircle? _current;
   FamilyCircle? get currentFamilyCircle => _current;
 
-  final initialQuestionnaire = [
+  final questionnaire = [
     {
       'id': 'relation',
       'type': 'user',

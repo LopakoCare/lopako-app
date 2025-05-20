@@ -3,8 +3,8 @@ import 'package:lopako_app_lis/features/routines/models/routine_model.dart';
 
 class FamilyCircle {
   final String id;
-  final User createdBy;
-  final List<User> members;
+  final AppUser createdBy;
+  final List<AppUser> members;
   final String patientName;
   final DateTime createdAt;
   final String pin;
@@ -31,8 +31,8 @@ class FamilyCircle {
 
   FamilyCircle copyWith({
     String? id,
-    User? createdBy,
-    List<User>? members,
+    AppUser? createdBy,
+    List<AppUser>? members,
     String? patientName,
     DateTime? createdAt,
     String? pin,
@@ -42,11 +42,11 @@ class FamilyCircle {
     return FamilyCircle(
       id ?? this.id,
       createdBy: createdBy ?? this.createdBy,
-      members: members ?? this.members,
+      members: members != null ? List.from(members) : List.from(this.members),
       patientName: patientName ?? this.patientName,
       createdAt: createdAt ?? this.createdAt,
       pin: pin ?? this.pin,
-      routines: routines ?? this.routines,
+      routines: routines != null ? List.from(routines) : List.from(this.routines),
       currentRoutine: currentRoutine ?? this.currentRoutine,
     );
   }
@@ -54,9 +54,9 @@ class FamilyCircle {
   factory FamilyCircle.fromJson(Map<String, dynamic> json) {
     return FamilyCircle(
       json['id'] as String,
-      createdBy: User.fromJson(json['createdBy'] as Map<String, dynamic>),
+      createdBy: AppUser.fromJson(json['createdBy'] as Map<String, dynamic>),
       members: (json['members'] as List<dynamic>)
-        .map((e) => User.fromJson(e as Map<String, dynamic>))
+        .map((e) => AppUser.fromJson(e as Map<String, dynamic>))
         .toList(),
       patientName: json['patientName'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),

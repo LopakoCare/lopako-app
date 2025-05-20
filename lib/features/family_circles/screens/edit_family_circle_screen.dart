@@ -7,15 +7,22 @@ import 'package:lopako_app_lis/core/services/service_manager.dart';
 import 'package:lopako_app_lis/features/auth/models/user_model.dart';
 import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
+import 'package:lopako_app_lis/features/family_circles/screens/family_circle_member_item_widget.dart';
 import 'package:lopako_app_lis/features/family_circles/screens/share_family_circle_pin_screen.dart';
 import 'package:lopako_app_lis/features/family_circles/widgets/question_card_widget.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 
 class EditFamilyCircleScreen extends StatefulWidget {
   final FamilyCircle familyCircle;
+  final AppUser currentUser;
   final void Function(FamilyCircle familyCircle)? onSave;
 
-  const EditFamilyCircleScreen({super.key, required this.familyCircle, this.onSave});
+  EditFamilyCircleScreen({
+    super.key,
+    required FamilyCircle familyCircle,
+    required this.currentUser,
+    this.onSave,
+  }) : familyCircle = familyCircle.copyWith();
 
   @override
   _EditFamilyCircleScreenState createState() => _EditFamilyCircleScreenState();
@@ -30,18 +37,24 @@ class _EditFamilyCircleScreenState extends State<EditFamilyCircleScreen> {
 
   bool _isSaving = false;
 
-  List<User> members = [];
+  List<AppUser> members = [];
 
   bool _hasChanged() {
-    return _patientNameController.text != widget.familyCircle.patientName ||
-        members != widget.familyCircle.members;
+    if (_patientNameController.text != widget.familyCircle.patientName) return true;
+    if (widget.familyCircle.members.any((member) => !members.contains(member))) return true;
+    return false;
   }
 
   @override
   void initState() {
     super.initState();
     _patientNameController.text = widget.familyCircle.patientName;
-    members = widget.familyCircle.members;
+    widget.familyCircle.members.sort((a, b) {
+      if (a.id == widget.currentUser.id) return -1;
+      if (b.id == widget.currentUser.id) return 1;
+      return 0;
+    });
+    members = List.from(widget.familyCircle.members);
   }
 
   @override
@@ -51,20 +64,44 @@ class _EditFamilyCircleScreenState extends State<EditFamilyCircleScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.editFamilyCircle),
-        actions: [
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.trash),
-            onPressed: () {
-              // TODO: Implement delete family circle
-            },
-          )
-        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 16, top: 24, right: 16),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 64, right: 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.familyCircle.pin,
+                        style: TextStyle(
+                          fontSize: 64,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.primary,
+                          letterSpacing: 8,
+                          fontFamily: 'Courier New',
+                          height: 1.2,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        localizations.shareFamilyCirclePinDescription,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.neutral,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 48),
               Form(
                 key: _formKey,
                 child: Column(
@@ -99,6 +136,23 @@ class _EditFamilyCircleScreenState extends State<EditFamilyCircleScreen> {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+              Text(localizations.members, style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+              )),
+              ...members.map((member) {
+                final bool canRemove = member.id != widget.currentUser.id && widget.familyCircle.createdBy.id == widget.currentUser.id;
+                return FamilyCircleMemberItem(
+                  member: member,
+                  onRemove: canRemove ? () {
+                    setState(() {
+                      members.remove(member);
+                    });
+                  } : null,
+                  isAdmin: member.id == widget.familyCircle.createdBy.id,
+                );
+              }),
             ],
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 import 'package:lopako_app_lis/features/family_circles/screens/create_family_circle_screen.dart';
+import 'package:lopako_app_lis/features/family_circles/screens/edit_family_circle_screen.dart';
 import 'package:lopako_app_lis/features/family_circles/widgets/new_family_circle_widget.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
 
@@ -19,6 +20,25 @@ class _NewFamilyCircleScreenState extends State<NewFamilyCircleScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  void onComplete(familyCircle) async {
+    Navigator.pop(context);
+    await Navigator.pushReplacement(context,
+      MaterialPageRoute(builder: (context) =>
+        EditFamilyCircleScreen(
+          currentUser: familyCircle.members.last,
+          familyCircle: familyCircle,
+          onSave: (newCircle) {
+            familyCircle = newCircle;
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+    if (widget.onComplete != null) {
+      widget.onComplete!(familyCircle);
+    }
   }
 
   @override
@@ -58,22 +78,7 @@ class _NewFamilyCircleScreenState extends State<NewFamilyCircleScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CreateFamilyCircleScreen(
-                    onComplete: (familyCircle) async {
-                      // TODO: Descomentar cuando esté implementado
-                      //await Navigator.pushReplacement(context,
-                      //  MaterialPageRoute(builder: (context) =>
-                      //    EditFamilyCircleScreen(
-                      //      familyCircle: familyCircle,
-                      //      onSave: (familyCircle) {
-                      //        Navigator.of(context).popUntil((route) => route.isFirst);
-                      //      },
-                      //    ),
-                      //  ),
-                      //);
-                      if (widget.onComplete != null) {
-                        widget.onComplete!(familyCircle);
-                      }
-                    }
+                    onComplete: onComplete,
                   )),
                 );
               },

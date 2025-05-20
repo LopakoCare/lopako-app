@@ -21,23 +21,19 @@ class UserService extends BaseService {
       });
 
   /* ───── EDIT ───── */
-  Future<void> edit({String? uid, String? email, String? name, int? age}) async {
-    assert(uid != null || email != null, 'Necesitas uid o email');
-
-    final doc = uid != null
-        ? _db.collection('users').doc(uid)
-        : await _byEmail(email!);
-
-    final data = <String, dynamic>{};
-    if (name != null) data['name'] = name;
-    if (age != null) data['age'] = age;
-    data['updatedAt'] = FieldValue.serverTimestamp();
-
-    await doc.update(data);
+  Future<AppUser> edit(AppUser user) async {
+    final docRef = _db.collection('users').doc(user.id);
+    final data = {
+      'email': user.email,
+      'name': user.name,
+      'age': user.age,
+    };
+    await docRef.update(data);
+    return (await get(uid: user.id))!;
   }
 
   /* ───── GET ───── */
-  Future<User?> get({String? uid, String? email}) async {
+  Future<AppUser?> get({String? uid, String? email}) async {
     assert(uid != null || email != null, 'Necesitas uid o email');
 
     final docSnap = uid != null
@@ -46,7 +42,7 @@ class UserService extends BaseService {
 
     if (!docSnap.exists) return null;
     final data = docSnap.data()!;
-    return User(
+    return AppUser(
       docSnap.id,
       email: data['email'] as String,
       name: data['name'] as String,
@@ -57,19 +53,19 @@ class UserService extends BaseService {
   /* ───── FAMILY CIRCLES DEL USUARIO ───── */
   Future<List<String>> getFamilyCircles(String uid) async {
     final query = await _db
-        .collection('family_circles')
-        .where('members', arrayContains: uid)
-        .get();
+      .collection('family_circles')
+      .where('members', arrayContains: uid)
+      .get();
     return query.docs.map((d) => d.id).toList();
   }
 
   /* ───── helper byEmail ───── */
   Future<DocumentReference<Map<String, dynamic>>> _byEmail(String email) async {
     final q = await _db
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .limit(1)
-        .get();
+      .collection('users')
+      .where('email', isEqualTo: email)
+      .limit(1)
+      .get();
     if (q.docs.isEmpty) throw Exception('Usuario con email $email no existe');
     return q.docs.first.reference;
   }

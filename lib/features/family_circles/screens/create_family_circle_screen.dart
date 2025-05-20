@@ -38,7 +38,7 @@ class _CreateFamilyCircleScreenState extends State<CreateFamilyCircleScreen> {
   Widget build(BuildContext context) {
     final localizations = S.of(context);
     final familyCirclesService = ServiceManager.instance.getService<FamilyCirclesService>('familyCircles');
-    final questions = familyCirclesService.initialQuestionnaire;
+    final questions = familyCirclesService.questionnaire;
 
     bool allRequiredAnswered = questions.every((q) {
       final id = q['id'] as String;

@@ -42,7 +42,7 @@ class FamilyCircleItem extends StatelessWidget {
 }
 
 class FamilyCircleMembers extends StatelessWidget {
-  final List<User> members;
+  final List<AppUser> members;
   final double radius;
   final double overlap;    // cuánto se solapan
 
@@ -61,7 +61,8 @@ class FamilyCircleMembers extends StatelessWidget {
     final extraCount = members.length - displayMembers.length;
 
     // ancho total necesario para el Stack
-    final totalWidth = radius * 2 + (displayMembers.length - 1) * (radius * 2 - overlap);
+    final totalWidth = radius * 2 + (displayMembers.length - 1) * (radius * 2 - overlap)
+        + (extraCount > 0 ? (radius * 2 - overlap) : 0);
 
     return SizedBox(
       width: totalWidth,
@@ -70,7 +71,7 @@ class FamilyCircleMembers extends StatelessWidget {
         children: [
           for (var i = 0; i < displayMembers.length; i++)
             Positioned(
-              left: i * (radius * 2 - overlap),
+              left: (radius * 2 - overlap) * i,
               child: CircleAvatar(
                 radius: radius,
                 backgroundColor: Colors.white,
@@ -89,13 +90,17 @@ class FamilyCircleMembers extends StatelessWidget {
               left: displayMembers.length * (radius * 2 - overlap),
               child: CircleAvatar(
                 radius: radius,
-                backgroundColor: AppColors.neutral[200],
-                child: Text(
-                  '+$extraCount',
-                  style: TextStyle(
-                    color: AppColors.primary[900],
-                    fontWeight: FontWeight.bold,
-                    fontSize: radius * 0.8,
+                backgroundColor: Colors.white,
+                child: CircleAvatar(
+                  radius: radius - 2,
+                  backgroundColor: AppColors.neutral[200],
+                  child: Text(
+                    '+$extraCount',
+                    style: TextStyle(
+                      color: AppColors.primary[900],
+                      fontWeight: FontWeight.bold,
+                      fontSize: radius * 0.8,
+                    ),
                   ),
                 ),
               ),

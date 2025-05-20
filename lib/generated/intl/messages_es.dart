@@ -44,6 +44,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "back": MessageLookupByLibrary.simpleMessage("Volver"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendario"),
+    "changePassword": MessageLookupByLibrary.simpleMessage(
+      "Cambiar contraseña",
+    ),
+    "confirmPassword": MessageLookupByLibrary.simpleMessage(
+      "Confirmar contraseña",
+    ),
     "continueWithApple": MessageLookupByLibrary.simpleMessage(
       "Continuar con Apple",
     ),
@@ -59,10 +65,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "createFamilyCircle": MessageLookupByLibrary.simpleMessage(
       "Crear círculo familiar",
     ),
+    "currentPassword": MessageLookupByLibrary.simpleMessage(
+      "Contraseña actual",
+    ),
     "delete": MessageLookupByLibrary.simpleMessage("Eliminar"),
     "discoverRoutines": MessageLookupByLibrary.simpleMessage(
       "Descubrir rutinas",
     ),
+    "editAccount": MessageLookupByLibrary.simpleMessage("Editar cuenta"),
     "editFamilyCircle": MessageLookupByLibrary.simpleMessage(
       "Editar círculo familiar",
     ),
@@ -104,6 +114,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "later": MessageLookupByLibrary.simpleMessage("Más tarde"),
     "loading": MessageLookupByLibrary.simpleMessage("Cargando..."),
     "logout": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
+    "members": MessageLookupByLibrary.simpleMessage("Miembros"),
     "missingRequiredAnswers": MessageLookupByLibrary.simpleMessage(
       "Responde las preguntas obligatorias",
     ),
@@ -112,6 +123,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "nameRequired": MessageLookupByLibrary.simpleMessage(
       "El nombre es obligatorio.",
     ),
+    "newPassword": MessageLookupByLibrary.simpleMessage("Nueva contraseña"),
     "night": MessageLookupByLibrary.simpleMessage("Noche"),
     "noRoutinesFound": MessageLookupByLibrary.simpleMessage(
       "No se han encontrado rutinas.",
@@ -119,6 +131,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "or": MessageLookupByLibrary.simpleMessage("o"),
     "password": MessageLookupByLibrary.simpleMessage("Contraseña"),
+    "passwordMinLength": MessageLookupByLibrary.simpleMessage(
+      "La contraseña debe tener al menos 6 caracteres.",
+    ),
     "passwordRequired": MessageLookupByLibrary.simpleMessage(
       "La contraseña es obligatoria.",
     ),
@@ -129,6 +144,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Las contraseñas no coinciden",
     ),
     "patientName": MessageLookupByLibrary.simpleMessage("Nombre del paciente"),
+    "personalInformation": MessageLookupByLibrary.simpleMessage(
+      "Información personal",
+    ),
     "profileUpdateError": MessageLookupByLibrary.simpleMessage(
       "Error al actualizar el perfil: ",
     ),

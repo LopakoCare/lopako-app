@@ -12,14 +12,20 @@ class FamilyCirclesController extends ChangeNotifier {
       : _familyCirclesService = ServiceManager.instance.getService('familyCircles') as FamilyCirclesService;
 
   /// Get the JSON questionnaire for creating a family circle
-  List<Map<String, Object>> get initialQuestionnaire {
-    return _familyCirclesService.initialQuestionnaire;
+  List<Map<String, Object>> get fullQuestionnaire {
+    return _familyCirclesService.questionnaire;
   }
 
   /// Get the JSON questionnaire for joining a family circle
-  List<Map<String, Object>> get joinQuestionnaire {
-    return _familyCirclesService.initialQuestionnaire
-        .where((item) => item['type'] == 'join').toList();
+  List<Map<String, Object>> get userQuestionnaire {
+    return _familyCirclesService.questionnaire
+        .where((item) => item['type'] == 'user').toList();
+  }
+
+  /// Get the JSON questionnaire for editing a family circle
+  List<Map<String, Object>> get patientQuestionnaire {
+    return _familyCirclesService.questionnaire
+        .where((item) => item['type'] == 'patient').toList();
   }
 
   /// Create a new family circle from a [patientName] and the [questionary] to be used and return the [pin] code.

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lopako_app_lis/core/services/family_circles_service.dart';
 import 'package:lopako_app_lis/core/services/routines_service.dart';
+import 'package:lopako_app_lis/features/auth/models/user_model.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 
 import 'service_manager.dart';
@@ -103,5 +104,33 @@ class AuthService extends BaseService {
   /* ──────────── VERIFICAR CUENTA LOGGEADA ──────────── */
   bool isLogged() {
     return _auth.currentUser != null;
+  }
+
+  /* ──────────── CAMBIAR PASSWORD ──────────── */
+  Future<void> changePassword({required String currentPassword, required String newPassword}) async {
+    if (_auth.currentUser == null) {
+      throw Exception('No hay ningún usuario con la sesión iniciada.');
+    }
+    if (currentPassword == newPassword) {
+      throw Exception('La nueva contraseña no puede ser igual a la actual.');
+    }
+    final providers = await getProviders(_auth.currentUser!.email!);
+    if (providers.isEmpty) {
+      throw Exception('El usuario no está registrado.');
+    }
+    final provider = providers.first;
+    if (provider != 'password') {
+      throw Exception('El usuario no está unido a la autenticación por contraseña.');
+    }
+    final credential = EmailAuthProvider.credential(
+      email: _auth.currentUser!.email!,
+      password: currentPassword,
+    );
+    try {
+      await _auth.currentUser!.reauthenticateWithCredential(credential);
+    } catch (e) {
+      throw Exception('La contraseña actual es incorrecta.');
+    }
+    await _auth.currentUser!.updatePassword(newPassword);
   }
 }

@@ -16,7 +16,7 @@ class ProfileOptionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initials = title.trim().split(' ').map((s) => s[0]).take(2).join();
+    final initials = title.trim().split(' ').map((s) => s[0]).take(2).join().toUpperCase();
     return ListTile(
       onTap: onTap,
       leading: CircleAvatar(
