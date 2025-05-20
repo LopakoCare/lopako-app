@@ -58,6 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
       _isFamilyCircleLoading = true;
     });
     _currentFamilyCircle = await _familyCirclesController.getCurrentFamilyCircle();
+    if (widget.familyCircles.isNotEmpty) {
+      _currentFamilyCircle ??= widget.familyCircles.first;
+    }
     _currentExtent = _lockSheet ? _maxSheetExtent : _minSheetExtent;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_lockSheet && _sheetController.isAttached) {

@@ -65,7 +65,6 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
   Future<void> _fetchFamilyCircles() async {
     if (!mounted) return;
     setState(() => _isFamilyCirclesLoading = true);
-
     final circles = await _familyCirclesController.getFamilyCircles();
     if (!mounted) return;
     setState(() {
@@ -77,7 +76,6 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
   Future<void> _fetchCurrentUser() async {
     if (!mounted) return;
     setState(() => _isCurrentUserLoading = true);
-
     final u = await _authController.getUser();
     if (!mounted) return;
     setState(() {
