@@ -117,6 +117,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "loading": MessageLookupByLibrary.simpleMessage("Cargando..."),
     "logout": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
     "members": MessageLookupByLibrary.simpleMessage("Miembros"),
+    "microlearningActivity": MessageLookupByLibrary.simpleMessage(
+      "Actividad de aprendizaje",
+    ),
     "missingRequiredAnswers": MessageLookupByLibrary.simpleMessage(
       "Responde las preguntas obligatorias",
     ),
@@ -154,6 +157,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "patientName": MessageLookupByLibrary.simpleMessage("Nombre del paciente"),
     "personalInformation": MessageLookupByLibrary.simpleMessage(
       "Información personal",
+    ),
+    "practiceActivity": MessageLookupByLibrary.simpleMessage(
+      "Actividad práctica",
     ),
     "profileUpdateError": MessageLookupByLibrary.simpleMessage(
       "Error al actualizar el perfil: ",

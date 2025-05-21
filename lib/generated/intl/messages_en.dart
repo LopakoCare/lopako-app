@@ -24,7 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "activities": MessageLookupByLibrary.simpleMessage("Actividades"),
+    "activities": MessageLookupByLibrary.simpleMessage("Activities"),
     "addFamilyCircle": MessageLookupByLibrary.simpleMessage(
       "Add family circle",
     ),
@@ -42,7 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "An error occurred during authentication process. Please try again.",
     ),
     "back": MessageLookupByLibrary.simpleMessage("Back"),
-    "beforeStart": MessageLookupByLibrary.simpleMessage("Antes de empezar"),
+    "beforeStart": MessageLookupByLibrary.simpleMessage("Before starting"),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change password"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm password"),
@@ -105,6 +105,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "logout": MessageLookupByLibrary.simpleMessage("Log out"),
     "members": MessageLookupByLibrary.simpleMessage("Members"),
+    "microlearningActivity": MessageLookupByLibrary.simpleMessage(
+      "Microlearning activity",
+    ),
     "missingRequiredAnswers": MessageLookupByLibrary.simpleMessage(
       "Answer required questions",
     ),
@@ -140,6 +143,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "patientName": MessageLookupByLibrary.simpleMessage("Patient name"),
     "personalInformation": MessageLookupByLibrary.simpleMessage(
       "Personal information",
+    ),
+    "practiceActivity": MessageLookupByLibrary.simpleMessage(
+      "Practice activity",
     ),
     "profileUpdateError": MessageLookupByLibrary.simpleMessage(
       "Error updating profile: ",

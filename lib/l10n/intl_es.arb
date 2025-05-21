@@ -89,5 +89,7 @@
   "noFamilyCirclesYet": "Aún no tienes ningún círculo familiar.",
   "noRoutinesYet": "Aún no tienes ninguna rutina.",
   "beforeStart": "Antes de empezar",
-  "activities": "Actividades"
+  "activities": "Actividades",
+  "microlearningActivity": "Actividad de aprendizaje",
+  "practiceActivity": "Actividad práctica"
 }

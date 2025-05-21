@@ -770,19 +770,39 @@ class S {
     );
   }
 
-  /// `Antes de empezar`
+  /// `Before starting`
   String get beforeStart {
     return Intl.message(
-      'Antes de empezar',
+      'Before starting',
       name: 'beforeStart',
       desc: '',
       args: [],
     );
   }
 
-  /// `Actividades`
+  /// `Activities`
   String get activities {
-    return Intl.message('Actividades', name: 'activities', desc: '', args: []);
+    return Intl.message('Activities', name: 'activities', desc: '', args: []);
+  }
+
+  /// `Microlearning activity`
+  String get microlearningActivity {
+    return Intl.message(
+      'Microlearning activity',
+      name: 'microlearningActivity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Practice activity`
+  String get practiceActivity {
+    return Intl.message(
+      'Practice activity',
+      name: 'practiceActivity',
+      desc: '',
+      args: [],
+    );
   }
 }
 

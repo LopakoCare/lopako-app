@@ -4,6 +4,7 @@ import 'package:lopako_app_lis/core/constants/app_colors.dart';
 import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 import 'package:lopako_app_lis/features/routines/models/routine_activity_model.dart';
+import 'package:lopako_app_lis/features/routines/screens/routine_activity_screen.dart';
 import 'package:lopako_app_lis/features/routines/widgets/routine_activity_card_widget.dart';
 import 'package:lopako_app_lis/features/routines/widgets/routine_category_score_widget.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
@@ -88,11 +89,6 @@ class _RoutineActiveSheetState extends State<RoutineActiveSheet> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    routine.description,
-                    style: const TextStyle(fontSize: 14),
-                  ),
                   if (microlearningActivities.isNotEmpty) ...[
                     const SizedBox(height: 32),
                     Text(
@@ -105,7 +101,21 @@ class _RoutineActiveSheetState extends State<RoutineActiveSheet> {
                     ...microlearningActivities.map(
                           (activity) => Padding(
                         padding: const EdgeInsets.only(top: 8),
-                        child: RoutineActivityCard(activity: activity),
+                        child: RoutineActivityCard(
+                          activity: activity,
+                          onTap: (activity) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => RoutineActivityScreen(
+                                  activity: activity,
+                                  onFinished: () {
+                                    Navigator.of(context).maybePop();
+                                  },
+                                ),
+                              ),
+                            );
+                          }
+                        ),
                       ),
                     ),
                   ],
@@ -121,10 +131,29 @@ class _RoutineActiveSheetState extends State<RoutineActiveSheet> {
                     ...practiceActivities.map(
                           (activity) => Padding(
                         padding: const EdgeInsets.only(top: 8),
-                        child: RoutineActivityCard(activity: activity),
+                        child: RoutineActivityCard(
+                            activity: activity,
+                            onTap: (activity) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => RoutineActivityScreen(
+                                    activity: activity,
+                                    onFinished: () {
+                                      Navigator.of(context).maybePop();
+                                    },
+                                  ),
+                                ),
+                              );
+                            }
+                        ),
                       ),
                     ),
                   ],
+                  const SizedBox(height: 32),
+                  Text(
+                    routine.description,
+                    style: const TextStyle(fontSize: 14),
+                  ),
                   const SizedBox(height: 32),
                   Card(
                     color: routine.category.color[50],

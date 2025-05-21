@@ -6,27 +6,27 @@ import 'package:lopako_app_lis/features/routines/models/routine_activity_model.d
 
 class RoutineActivityCard extends StatelessWidget {
   final RoutineActivity activity;
-  final ValueChanged<RoutineActivity>? onSelected;
+  final ValueChanged<RoutineActivity>? onTap;
   final maxSubcategories = 2;
 
   const RoutineActivityCard({
     super.key,
     required this.activity,
-    this.onSelected,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
 
-    final bool rippleEnabled = onSelected != null;
+    final bool rippleEnabled = onTap != null;
 
     final card = Card(
       color: activity.color[50],
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          if (onSelected != null) {
-            onSelected!(activity);
+          if (onTap != null) {
+            onTap!(activity);
           }
         },
         child: Padding(
@@ -49,7 +49,7 @@ class RoutineActivityCard extends StatelessWidget {
                   ),
                 ),
               ),
-              if (onSelected != null)
+              if (onTap != null)
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
