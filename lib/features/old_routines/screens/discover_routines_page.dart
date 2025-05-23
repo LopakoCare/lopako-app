@@ -33,7 +33,7 @@ class _RoutinesPageState extends State<RoutinesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final rutinasRef = FirebaseFirestore.instance.collection('routines');
+    final rutinasRef = FirebaseFirestore.instance.collection('old_routines');
 
     return Scaffold(
       appBar: AppBar(

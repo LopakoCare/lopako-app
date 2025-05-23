@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lopako_app_lis/core/constants/app_colors.dart';
 
 class SocialSignInButton extends StatelessWidget {
   final String text;
@@ -21,24 +22,25 @@ class SocialSignInButton extends StatelessWidget {
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12.0),
           ),
-          side: BorderSide(color: Theme.of(context).dividerColor),
+          side: BorderSide(color: AppColors.neutral[300]!, width: 2.0),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               icon,
-              height: 24,
-              width: 24,
+              height: 28,
+              width: 28,
             ),
             const SizedBox(width: 12),
             Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
+                color: AppColors.neutral[800],
               ),
             ),
           ],

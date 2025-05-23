@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lopako_app_lis/core/constants/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'core/services/service_manager.dart';
 import 'generated/l10n.dart';
 
 import 'core/services/auth_service.dart';
@@ -20,11 +21,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(),
-        ),
         ChangeNotifierProvider<AuthController>(
-          create: (ctx) => AuthController(ctx.read<AuthService>()),
+          create: (_) => AuthController(),
         ),
         ChangeNotifierProvider<CalendarController>(
           create: (_) => CalendarController(),
@@ -33,10 +31,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Lopako',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
+        theme: AppTheme.lightTheme,
         localizationsDelegates: const [
           S.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -58,7 +53,6 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           '/auth': (context) => const AuthScreen(),
-          '/routines': (context) => const HomeScreen(),
           '/calendar': (context) => const CalendarScreen(),
         },
       ),

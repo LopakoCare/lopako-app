@@ -1,19 +1,97 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'dart:io' show Platform;
+import 'package:lopako_app_lis/core/services/family_circles_service.dart';
+import 'package:lopako_app_lis/core/services/routines_service.dart';
+import 'package:lopako_app_lis/features/auth/models/user_model.dart';
+import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 
-class AuthService {
+import 'service_manager.dart';
+import 'user_service.dart';
+
+class AuthService extends BaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: '341117955819-7t6hojuq0ejen0a6n0jcq0a68ajdh0ac.apps.googleusercontent.com',
-  );
+  final GoogleSignIn _google = GoogleSignIn();
 
-  // Get current user
   User? get currentUser => _auth.currentUser;
 
-  /// Check if email exists in Firebase Auth from an [email] field
-  Future<List<String>> checkEmailExists(String email) async {
+  /* ──────────── SIGN UP ──────────── */
+  Future<UserCredential> signup({
+    required String email,
+    required String password,
+    required String name,
+    required int age,
+  }) async {
+    final cred = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    await cred.user!.updateDisplayName(name);
+    await cred.user!.sendEmailVerification();
+
+    // Crea el documento en “users”
+    final userSvc = serviceManager.getService<UserService>('user');
+    await userSvc.create(
+      uid: cred.user!.uid,
+      email: email,
+      name: name,
+      age: age,
+    );
+
+    return cred;
+  }
+
+  /* ──────────── LOGIN ──────────── */
+  Future<User?> login(String email, String password) async {
+    final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+    // Recuperamos y cacheamos los datos del usuario si quieres
+    final userSvc = serviceManager.getService<UserService>('user');
+    await userSvc.get(uid: cred.user!.uid);
+
+    final familyCircles = await userSvc.getFamilyCircles(cred.user!.uid);
+    if (familyCircles.isNotEmpty) {
+      final familyCircleSvc = serviceManager.getService<FamilyCirclesService>('familyCircles');
+      final familyCircle = familyCircleSvc.getFamilyCircle(familyCircles.first);
+      await familyCircleSvc.switchFamilyCircle(familyCircle as FamilyCircle);
+    }
+
+    return cred.user;
+  }
+
+  /* ────── GOOGLE SSO (alta o login) ────── */
+  Future<User?> signinWithGoogle() async {
+    final gUser = await _google.signIn();
+    if (gUser == null) return null;
+    final gAuth = await gUser.authentication;
+    final cred = await _auth.signInWithCredential(
+      GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken,
+        idToken: gAuth.idToken,
+      ),
+    );
+    final isNew = cred.additionalUserInfo?.isNewUser ?? false;
+    if (isNew) {
+      final displayName = gUser.displayName ?? gUser.email.split('@').first;
+      int? age;
+      await serviceManager.getService<UserService>('user')
+          .create(uid: cred.user!.uid, email: gUser.email, name: displayName, age: age);
+    }
+    return cred.user;
+  }
+
+  /* ──────────── LOGOUT ──────────── */
+  Future<void> logout() async {
+    await _google.signOut();
+    await _auth.signOut();
+    final familyCirclesSvc = serviceManager.getService<FamilyCirclesService>('familyCircles');
+    final routinesSvc = serviceManager.getService<RoutinesService>('routines');
+    await familyCirclesSvc.clearCache();
+    await routinesSvc.clearCache();
+  }
+
+  /* ──────────── PROVEEDOR ──────────── */
+  Future<List<String>> getProviders(String email) async {
     List<String> providers = [];
     try {
       providers = await _auth.fetchSignInMethodsForEmail(email);
@@ -23,124 +101,36 @@ class AuthService {
     return providers;
   }
 
-  // Sign in with email and password
-  Future<UserCredential> signInWithEmailPassword(String email, String password) async {
-    try {
-      return await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      print('Error signing in with email and password: $e');
-      rethrow;
-    }
+  /* ──────────── VERIFICAR CUENTA LOGGEADA ──────────── */
+  bool isLogged() {
+    return _auth.currentUser != null;
   }
 
-  // Register with email and password
-  Future<UserCredential> registerWithEmailPassword(
-      String email,
-      String password,
-      String name,
-      int age
-      ) async {
-    try {
-      // Create user
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // Update user profile with name
-      await userCredential.user?.updateDisplayName(name);
-
-      // Store additional user data in Firestore
-      // This would typically be done in a separate user service
-      // await _firestoreService.createUserProfile(
-      //   userCredential.user!.uid,
-      //   {
-      //     'name': name,
-      //     'email': email,
-      //     'age': age,
-      //     'createdAt': DateTime.now(),
-      //   },
-      // );
-
-      // Send email verification
-      await userCredential.user?.sendEmailVerification();
-
-      return userCredential;
-    } catch (e) {
-      print('Error registering with email and password: $e');
-      rethrow;
+  /* ──────────── CAMBIAR PASSWORD ──────────── */
+  Future<void> changePassword({required String currentPassword, required String newPassword}) async {
+    if (_auth.currentUser == null) {
+      throw Exception('No hay ningún usuario con la sesión iniciada.');
     }
-  }
-
-  // Sign in with Google
-  Future<UserCredential> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      if (googleUser == null) {
-        throw FirebaseAuthException(
-          code: 'ERROR_ABORTED_BY_USER',
-          message: 'Sign in aborted by user',
-        );
-      }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      return await _auth.signInWithCredential(credential);
-    } catch (e) {
-      print('Error signing in with Google: $e');
-      rethrow;
+    if (currentPassword == newPassword) {
+      throw Exception('La nueva contraseña no puede ser igual a la actual.');
     }
-  }
-
-  // Sign in with Apple
-  Future<UserCredential> signInWithApple() async {
-    try {
-      // Request credentials
-      final AuthorizationCredentialAppleID appleCredential =
-      await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-
-      // Create OAuthCredential
-      final OAuthCredential credential = OAuthProvider('apple.com').credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
-
-      // Sign in with credential
-      final userCredential = await _auth.signInWithCredential(credential);
-
-      // Update user profile if name is available and user is new
-      if (appleCredential.givenName != null &&
-          appleCredential.familyName != null &&
-          userCredential.additionalUserInfo?.isNewUser == true) {
-        await userCredential.user?.updateDisplayName(
-            '${appleCredential.givenName} ${appleCredential.familyName}'
-        );
-      }
-
-      return userCredential;
-    } catch (e) {
-      print('Error signing in with Apple: $e');
-      rethrow;
+    final providers = await getProviders(_auth.currentUser!.email!);
+    if (providers.isEmpty) {
+      throw Exception('El usuario no está registrado.');
     }
-  }
-
-  // Sign out
-  Future<void> signOut() async {
-    await _googleSignIn.signOut();
-    await _auth.signOut();
+    final provider = providers.first;
+    if (provider != 'password') {
+      throw Exception('El usuario no está unido a la autenticación por contraseña.');
+    }
+    final credential = EmailAuthProvider.credential(
+      email: _auth.currentUser!.email!,
+      password: currentPassword,
+    );
+    try {
+      await _auth.currentUser!.reauthenticateWithCredential(credential);
+    } catch (e) {
+      throw Exception('La contraseña actual es incorrecta.');
+    }
+    await _auth.currentUser!.updatePassword(newPassword);
   }
 }

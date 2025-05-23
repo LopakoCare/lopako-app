@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lopako_app_lis/core/services/service_manager.dart';
+import 'package:lopako_app_lis/core/services/user_service.dart';
+import 'package:lopako_app_lis/features/auth/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
 import '../models/auth_state_model.dart';
 
@@ -6,12 +9,13 @@ class AuthController extends ChangeNotifier {
   final AuthService _authService;
   AuthStateModel _state = AuthStateModel();
 
-  AuthController(this._authService);
+  AuthController()
+      : _authService = ServiceManager.instance.getService('auth') as AuthService;
 
   AuthStateModel get state => _state;
 
   // Update email and check if it exists in Firebase
-  Future<void> checkEmail(String email) async {
+  Future<void> login(String email) async {
     if (email.isEmpty || !_isValidEmail(email)) {
       _state = _state.copyWith(
         errorMessage: 'Please enter a valid email address',
@@ -28,7 +32,7 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final providers = await _authService.checkEmailExists(email);
+      final providers = await _authService.getProviders(email);
 
       if (providers.isEmpty) {
         // Email doesn't exist, proceed to registration
@@ -48,8 +52,6 @@ class AuthController extends ChangeNotifier {
         String firstProvider = providers.first;
         if (firstProvider == 'google.com') {
           await signInWithGoogle();
-        } else {
-          await signInWithApple();
         }
       }
     } catch (e) {
@@ -63,7 +65,7 @@ class AuthController extends ChangeNotifier {
   }
 
   // Sign in with email and password
-  Future<bool> signInWithEmailPassword(String password) async {
+  Future<bool> loginWithPassword(String password) async {
     if (password.isEmpty) {
       _state = _state.copyWith(
         errorMessage: 'Please enter your password',
@@ -80,7 +82,7 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.signInWithEmailPassword(_state.email, password);
+      await _authService.login(_state.email, password);
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
       return true;
@@ -135,11 +137,11 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.registerWithEmailPassword(
-        _state.email,
-        password,
-        name,
-        age,
+      await _authService.signup(
+        email: _state.email,
+        password: password,
+        name: name,
+        age: age,
       );
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
@@ -162,33 +164,12 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.signInWithGoogle();
+      await _authService.signinWithGoogle();
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
       return true;
     } catch (e) {
       _state = _state.copyWith(isLoading: false);
-      notifyListeners();
-      throw e;
-    }
-  }
-
-  // Sign in with Apple
-  Future<bool> signInWithApple() async {
-    _state = _state.copyWith(
-      isLoading: true,
-    );
-    notifyListeners();
-
-    try {
-      await _authService.signInWithApple();
-      _state = _state.copyWith(isLoading: false);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _state = _state.copyWith(
-        isLoading: false,
-      );
       notifyListeners();
       throw e;
     }
@@ -211,34 +192,26 @@ class AuthController extends ChangeNotifier {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
-  String _formatProviders(List<String> providers) {
-    final formattedProviders = providers.map((provider) {
-      switch (provider) {
-        case 'google.com':
-          return 'Google';
-        case 'apple.com':
-          return 'Apple';
-        case 'password':
-          return 'Email/Password';
-        default:
-          return provider;
-      }
-    }).toList();
-
-    if (formattedProviders.length == 1) {
-      return formattedProviders.first;
-    } else if (formattedProviders.length == 2) {
-      return '${formattedProviders.first} or ${formattedProviders.last}';
-    } else {
-      final last = formattedProviders.removeLast();
-      return '${formattedProviders.join(', ')}, or $last';
-    }
-  }
-
-  // Sign out
-  void signOut() async {
-    await _authService.signOut();
+  // Logout
+  Future<void> logout() async {
+    await _authService.logout();
     _state = AuthStateModel(); // Reset state after sign out
     notifyListeners();
+  }
+
+  // Get user
+  Future<AppUser?> getUser() async {
+    final usrSrv = ServiceManager.instance.getService('user') as UserService;
+    return await usrSrv.get(uid: _authService.currentUser?.uid);
+  }
+
+  /// Change the [currentPassword] to the [newPassword] for the current user.
+  Future<void> changePassword({required String currentPassword, required String newPassword}) async {
+    await _authService.changePassword(currentPassword: currentPassword, newPassword: newPassword);
+  }
+
+  /// Check if the current user is logged in with a password provider.
+  bool isUsingPassword() {
+    return _state.availableProviders.contains('password');
   }
 }
