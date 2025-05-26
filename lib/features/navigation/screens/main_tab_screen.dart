@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lopako_app_lis/core/constants/app_colors.dart';
 import 'package:lopako_app_lis/features/auth/controllers/auth_controller.dart';
 import 'package:lopako_app_lis/features/auth/models/user_model.dart';
+import 'package:lopako_app_lis/features/chatbot/screens/chatbot_screen.dart';
 import 'package:lopako_app_lis/features/family_circles/controllers/family_circles_controller.dart';
 import 'package:lopako_app_lis/features/family_circles/models/family_circle_model.dart';
 import 'package:lopako_app_lis/generated/l10n.dart';
@@ -37,7 +38,7 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 3,
+      length: 4,
       vsync: this,
       initialIndex: _currentIndex,
     )..addListener(_handleTabSelection);
@@ -116,6 +117,9 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
             CalendarScreen(
               key: PageStorageKey('calendar')
             ),
+            ChatbotScreen(
+              key: PageStorageKey('assistant'),
+            ),
             SettingsScreen(
               key: PageStorageKey('settings'),
               user: user!,
@@ -150,6 +154,10 @@ class _MainTabScreenState extends State<MainTabScreen> with SingleTickerProvider
               BottomNavigationBarItem(
                 icon: FaIcon(FontAwesomeIcons.calendarDay),
                 label: localizations.calendar,
+              ),
+              BottomNavigationBarItem(
+                icon: FaIcon(FontAwesomeIcons.robot),
+                label: localizations.assistant,
               ),
               BottomNavigationBarItem(
                 icon: FaIcon(FontAwesomeIcons.gear),

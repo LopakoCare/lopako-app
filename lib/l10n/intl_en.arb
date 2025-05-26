@@ -91,5 +91,6 @@
   "beforeStart": "Before starting",
   "activities": "Activities",
   "microlearningActivity": "Microlearning activity",
-  "practiceActivity": "Practice activity"
+  "practiceActivity": "Practice activity",
+  "assistant": "Assistant"
 }

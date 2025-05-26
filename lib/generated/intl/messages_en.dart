@@ -38,6 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "afternoon": MessageLookupByLibrary.simpleMessage("Afternoon"),
     "age": MessageLookupByLibrary.simpleMessage("Age"),
     "ageRequired": MessageLookupByLibrary.simpleMessage("Age is required."),
+    "assistant": MessageLookupByLibrary.simpleMessage("Assistant"),
     "authError": MessageLookupByLibrary.simpleMessage(
       "An error occurred during authentication process. Please try again.",
     ),

@@ -804,6 +804,11 @@ class S {
       args: [],
     );
   }
+
+  /// `Assistant`
+  String get assistant {
+    return Intl.message('Assistant', name: 'assistant', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
